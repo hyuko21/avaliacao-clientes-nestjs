@@ -10,11 +10,17 @@ import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interf
 import { mockAddClienteDTO } from '#/clientes/dtos/test/mock-add-cliente.dto';
 import { ClientesConfig } from '#/clientes/config/clientes.config';
 import { getRepository } from 'typeorm';
-import { ClienteEntity } from '../data/entities/cliente.entity';
-import { mockManyClienteEntity } from '../data/entities/test/mock-cliente.entity';
+import { ClienteEntity } from '#/clientes/data/entities/cliente.entity';
+import {
+  mockClienteEntity,
+  mockManyClienteEntity,
+} from '#/clientes/data/entities/test/mock-cliente.entity';
+import { IModifyClienteDTO } from '#/clientes/dtos/protocols/modify-cliente.dto.interface';
+import { mockModifyClienteDTO } from '#/clientes/dtos/test/mock-modify-cliente.dto';
 
 describe('Clientes e2e', () => {
   let app: INestApplication;
+  let agentTest: request.SuperTest<request.Test>;
   let requestTest: request.Test;
 
   beforeAll(async () => {
@@ -27,6 +33,7 @@ describe('Clientes e2e', () => {
   });
 
   beforeEach(async () => {
+    agentTest = request(app.getHttpServer());
     await truncate();
   });
 
@@ -40,7 +47,7 @@ describe('Clientes e2e', () => {
     let requestBody: IAddClienteDTO;
 
     beforeEach(() => {
-      requestTest = request(app.getHttpServer()).post(baseURL);
+      requestTest = agentTest.post(baseURL);
       requestBody = mockAddClienteDTO();
       requestTest.send(requestBody);
     });
@@ -96,7 +103,7 @@ describe('Clientes e2e', () => {
     const baseURL = ClientesConfig.prefix;
 
     beforeEach(() => {
-      requestTest = request(app.getHttpServer()).get(baseURL);
+      requestTest = agentTest.get(baseURL);
     });
 
     it('should empty array if Clientes not found', async () => {
@@ -116,6 +123,115 @@ describe('Clientes e2e', () => {
             atualizadoEm: expect.any(String),
           })),
         );
+      });
+    });
+  });
+
+  describe(`PUT ${ClientesConfig.prefix}/:id`, () => {
+    const baseURL = (idCliente: string) =>
+      `${ClientesConfig.prefix}/${idCliente}`;
+
+    it('should return 400 if param :id is malformed', async () => {
+      const invalidIdCliente = Faker.datatype.string();
+
+      await agentTest.put(baseURL(invalidIdCliente)).expect(400, {
+        statusCode: 400,
+        message: ['id must be a valid UUID v4'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 404 if Cliente not found', async () => {
+      const randomIdCliente = Faker.datatype.uuid();
+
+      await agentTest.put(baseURL(randomIdCliente)).expect(404, {
+        statusCode: 404,
+        message: 'Not Found',
+      });
+    });
+
+    describe('when Cliente exists', () => {
+      let clienteEntity: ClienteEntity;
+
+      beforeEach(async () => {
+        clienteEntity = await getRepository(ClienteEntity).save(
+          mockClienteEntity(),
+        );
+        requestTest = agentTest.put(baseURL(clienteEntity.id));
+      });
+
+      it('should return 200 if body is empty', async () => {
+        await requestTest.expect(200).expect(({ body }) => {
+          expect(body).toEqual({
+            ...clienteEntity,
+            criadoEm: expect.any(String),
+            atualizadoEm: expect.any(String),
+          });
+        });
+      });
+
+      describe('when body is provided', () => {
+        let requestBody: IModifyClienteDTO;
+
+        beforeEach(() => {
+          requestBody = mockModifyClienteDTO();
+        });
+
+        describe('when body.email is invalid', () => {
+          beforeEach(() => {
+            requestBody.email = Faker.datatype.string();
+          });
+
+          it('should return 400 if body.email is invalid', async () => {
+            await requestTest.send(requestBody).expect(400, {
+              statusCode: 400,
+              message: ['email must be an email'],
+              error: 'Bad Request',
+            });
+          });
+        });
+
+        describe('when body.telefone is invalid', () => {
+          beforeEach(() => {
+            requestBody.telefone = Faker.datatype.string();
+          });
+
+          it('should return 400 if body.telefone is invalid', async () => {
+            await requestTest.send(requestBody).expect(400, {
+              statusCode: 400,
+              message: ['telefone must be a valid telefone number'],
+              error: 'Bad Request',
+            });
+          });
+        });
+
+        describe('when body.cpf is invalid', () => {
+          beforeEach(() => {
+            requestBody.cpf = Faker.datatype.string();
+          });
+
+          it('should return 400 if body.cpf is invalid', async () => {
+            await requestTest.send(requestBody).expect(400, {
+              statusCode: 400,
+              message: ['cpf must be a valid cpf number'],
+              error: 'Bad Request',
+            });
+          });
+        });
+
+        it('should return 200 (with modifications) on success', async () => {
+          await requestTest
+            .send(requestBody)
+            .expect(200)
+            .expect(({ body }) => {
+              expect(body).toEqual({
+                id: clienteEntity.id,
+                ...requestBody,
+                criadoEm: expect.any(String),
+                atualizadoEm: expect.any(String),
+              });
+            });
+        });
       });
     });
   });
