@@ -4,6 +4,7 @@ import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interf
 import { mockAddClienteDTO } from '#/clientes/dtos/test/mock-add-cliente.dto';
 import { ClientesRepository } from './clientes.repository';
 import { ClienteEntity } from './entities/cliente.entity';
+import { mockManyClienteEntity } from './entities/test/mock-cliente.entity';
 
 describe('ClientesRepository', () => {
   let repository: ClientesRepository;
@@ -57,6 +58,24 @@ describe('ClientesRepository', () => {
       });
 
       expect(result).toEqual(actualClienteEntity);
+    });
+  });
+
+  describe('list()', () => {
+    it('should return empty array if entities not found', async () => {
+      const result = await repository.list();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return array of ClienteEntity on success', async () => {
+      const manyClienteEntity = await getRepository(ClienteEntity).save(
+        mockManyClienteEntity(),
+      );
+
+      const result = await repository.list();
+
+      expect(result).toEqual(manyClienteEntity);
     });
   });
 });

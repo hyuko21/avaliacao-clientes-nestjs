@@ -7,7 +7,9 @@ export const mockClienteEntity = (): ClienteEntity => ({
   ...mockAbstractDTO(),
   nome: Faker.name.findName(),
   email: Faker.internet.email(),
-  telefone: Faker.phone.phoneNumber(),
+  telefone:
+    Faker.datatype.number({ min: 11, max: 99 }) +
+    Faker.phone.phoneNumber('9########'),
   cpf: DocumentUtilTest.generateCpf(),
 });
 

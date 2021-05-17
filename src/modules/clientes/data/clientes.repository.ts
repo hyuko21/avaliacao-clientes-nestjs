@@ -12,6 +12,6 @@ export class ClientesRepository
     return this.repository.save(dto);
   }
   list(): Promise<ClienteEntity[]> {
-    throw new Error('Method not implemented.');
+    return this.repository.find();
   }
 }
