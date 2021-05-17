@@ -2,10 +2,42 @@
 
 Sistema para medir o nível de satisfação que os clientes têm da marca. Para isso, o cliente poderá dar uma nota (0 a 10), e um comentário em que ele deve indicar o que gostou ou não.
 
+- ## Executando com Docker
+
+Considerando que você já possui `docker` e `docker-compose` instalados e configurados, apropriadamente.
+
+### Antes de começar...
+
+1. Crie uma cópia do arquivo `.env.example` e nomeie-a como `.env.development`;
+2. Verifique os dados de acesso ao banco de dados em `docker-compose.yml` e certifique-se de que as variáveis `DB_USERNAME`, `DB_PASSWORD` e `DB_DATABASE` possuem valores correspondentes aos valores presentes em `docker-compose.yml`;
+3. Altere `DB_HOST` para o valor `postgres`.
+
+### Inicializando os serviços...
+
+```bash
+# Construindo a aplicação e iniciando os serviços (NestJS, Postgres)
+$ docker-compose up -d
+```
+
+### Executando Migrações ao banco de dados
+
+Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` estejam de acordo com os dados de acesso dispostos em `docker-compose.yml`.
+
+```bash
+# Configurando o banco de dados
+$ docker-compose exec app yarn create:db
+```
 ## Instalação
 
 ```bash
 $ yarn install
+```
+## Executando Migrações ao banco de dados
+Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` estejam de acordo com os dados de acesso dispostos em `docker-compose.yml`.
+
+```bash
+# Configurando o banco de dados
+$ yarn create:db
 ```
 
 ## Executando a aplicação
@@ -37,28 +69,4 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Executando com Docker
 
-Considerando que você já possui `docker` e `docker-compose` instalados e configurados, apropriadamente.
-
-### Antes de começar...
-
-1. Crie uma cópia do arquivo `.env.example` e nomeie-a como `.env.development`;
-2. Verifique os dados de acesso ao banco de dados em `docker-compose.yml` e certifique-se de que as variáveis `DB_USERNAME`, `DB_PASSWORD` e `DB_DATABASE` possuem valores correspondentes aos valores presentes em `docker-compose.yml`;
-3. Altere `DB_HOST` para o valor `postgres`.
-
-### Inicializando os serviços...
-
-```bash
-# Construindo a aplicação e iniciando os serviços (NestJS, Postgres)
-$ docker-compose up -d
-```
-
-### Executando Migrações ao banco de dados
-
-Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` estejam de acordo com os dados de acesso dispostos em `docker-compose.yml`.
-
-```bash
-# Configurando o banco de dados
-$ docker-compose exec app yarn create:db
-```
