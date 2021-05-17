@@ -1,10 +1,19 @@
+import Faker from 'faker';
 import { createTestConnection, truncate } from '@/test/db';
 import { getConnection, getCustomRepository, getRepository } from 'typeorm';
 import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interface';
 import { mockAddClienteDTO } from '#/clientes/dtos/test/mock-add-cliente.dto';
 import { ClientesRepository } from './clientes.repository';
 import { ClienteEntity } from './entities/cliente.entity';
-import { mockManyClienteEntity } from './entities/test/mock-cliente.entity';
+import {
+  mockClienteEntity,
+  mockManyClienteEntity,
+} from './entities/test/mock-cliente.entity';
+import { IIdClienteDTO } from '#/clientes/dtos/protocols/id-cliente.dto.interface';
+import { IModifyClienteDTO } from '#/clientes/dtos/protocols/modify-cliente.dto.interface';
+import { mockIdClienteDTO } from '#/clientes/dtos/test/mock-id-cliente.dto';
+import { mockModifyClienteDTO } from '#/clientes/dtos/test/mock-modify-cliente.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ClientesRepository', () => {
   let repository: ClientesRepository;
@@ -76,6 +85,87 @@ describe('ClientesRepository', () => {
       const result = await repository.list();
 
       expect(result).toEqual(manyClienteEntity);
+    });
+  });
+
+  describe('modify()', () => {
+    let idDto: IIdClienteDTO, dto: IModifyClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+      dto = mockModifyClienteDTO();
+    });
+
+    it('should throw NotFoundException if ClienteEntity not found with idDto', async () => {
+      const promise = repository.modify(idDto, dto);
+
+      await expect(promise).rejects.toThrowError(new NotFoundException());
+    });
+
+    describe('when ClienteEntity exists', () => {
+      let clienteEntity: ClienteEntity;
+
+      beforeEach(async () => {
+        clienteEntity = await getRepository(ClienteEntity).save(
+          mockClienteEntity(),
+        );
+        idDto.id = clienteEntity.id;
+      });
+
+      it('should modify ClienteEntity data on success', async () => {
+        await repository.modify(idDto, dto);
+
+        const actualClienteEntity = await getRepository(ClienteEntity).findOne({
+          where: { id: clienteEntity.id },
+        });
+
+        expect(actualClienteEntity).toEqual(expect.objectContaining(dto));
+      });
+
+      it('should return ClienteEntity on success', async () => {
+        const result = await repository.modify(idDto, dto);
+
+        const actualClienteEntity = await getRepository(ClienteEntity).findOne({
+          where: { id: idDto.id },
+        });
+
+        expect(result).toEqual(actualClienteEntity);
+      });
+    });
+  });
+
+  describe('remove()', () => {
+    let idDto: IIdClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+    });
+
+    it('should throw NotFoundException if ClienteEntity not found with idDto', async () => {
+      const promise = repository.remove(idDto);
+
+      await expect(promise).rejects.toThrowError(new NotFoundException());
+    });
+
+    describe('when ClienteEntity exists', () => {
+      let manyClienteEntity: ClienteEntity[];
+
+      beforeEach(async () => {
+        manyClienteEntity = await getRepository(ClienteEntity).save(
+          mockManyClienteEntity(),
+        );
+        idDto.id = Faker.random.arrayElement(manyClienteEntity).id;
+      });
+
+      it('should remove correct ClienteEntity on success', async () => {
+        await repository.remove(idDto);
+
+        const countClienteEntity = await getRepository(ClienteEntity).count({
+          where: { id: idDto.id },
+        });
+
+        expect(countClienteEntity).toBe(0);
+      });
     });
   });
 });
