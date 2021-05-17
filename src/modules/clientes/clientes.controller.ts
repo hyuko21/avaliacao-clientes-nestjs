@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
@@ -10,7 +11,7 @@ import { ClienteDTO } from './dtos/cliente.dto';
 import { AddClienteDTO } from './dtos/add-cliente.dto';
 import { IClientesService } from './protocols/clientes.service.interface';
 import { ClientesProvider } from './providers/clientes.providers.enum';
-import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ClientesConfig } from './config/clientes.config';
 
 @ApiTags(ClientesConfig.name)
@@ -26,5 +27,11 @@ export class ClientesController {
   @HttpCode(HttpStatus.CREATED)
   add(@Body() dto: AddClienteDTO): Promise<ClienteDTO> {
     return this.clientesService.add(dto);
+  }
+
+  @ApiOkResponse({ type: [ClienteDTO] })
+  @Get()
+  list(): Promise<ClienteDTO[]> {
+    return this.clientesService.list();
   }
 }

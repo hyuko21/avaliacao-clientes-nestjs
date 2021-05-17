@@ -10,3 +10,8 @@ export const mockClienteDTO = (): IClienteDTO => ({
   telefone: Faker.phone.phoneNumber(),
   cpf: DocumentUtilTest.generateCpf(),
 });
+
+export const mockManyClienteDTO = (): IClienteDTO[] =>
+  Array.from({ length: Faker.datatype.number({ min: 4, max: 8 }) }).map(() =>
+    mockClienteDTO(),
+  );

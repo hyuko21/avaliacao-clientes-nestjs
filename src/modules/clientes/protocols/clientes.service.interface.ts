@@ -3,4 +3,5 @@ import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interf
 
 export interface IClientesService {
   add(dto: IAddClienteDTO): Promise<IClienteDTO>;
+  list(): Promise<IClienteDTO[]>;
 }
