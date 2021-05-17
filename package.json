@@ -23,8 +23,8 @@
     "run-ts": "node -r ts-node/register -r tsconfig-paths/register",
     "typeorm": "yarn run-ts node_modules/typeorm/cli",
     "sync:db": "yarn typeorm migration:run",
-    "create:db": "./db/scripts/run-scripts.sh create && yarn sync:db",
-    "reset:db": "./db/scripts/run-scripts.sh drop && yarn create:db"
+    "create:db": "sh ./db/scripts/run-scripts.sh create && yarn sync:db",
+    "reset:db": "sh ./db/scripts/run-scripts.sh drop && yarn create:db"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",

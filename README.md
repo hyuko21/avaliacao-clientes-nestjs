@@ -1,38 +1,14 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# API de avaliações para medir a experiência dos clientes.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Sistema para medir o nível de satisfação que os clientes têm da marca. Para isso, o cliente poderá dar uma nota (0 a 10), e um comentário em que ele deve indicar o que gostou ou não.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+## Instalação
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
-## Running the app
+## Executando a aplicação
 
 ```bash
 # development
@@ -45,11 +21,14 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Testando
 
 ```bash
-# unit tests
+# all tests
 $ npm run test
+
+# unit tests
+$ npm run test:unit
 
 # e2e tests
 $ npm run test:e2e
@@ -58,16 +37,28 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Executando com Docker
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Considerando que você já possui `docker` e `docker-compose` instalados e configurados, apropriadamente.
 
-## Stay in touch
+### Antes de começar...
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+1. Crie uma cópia do arquivo `.env.example` e nomeie-a como `.env.development`;
+2. Verifique os dados de acesso ao banco de dados em `docker-compose.yml` e certifique-se de que as variáveis `DB_USERNAME`, `DB_PASSWORD` e `DB_DATABASE` possuem valores correspondentes aos valores presentes em `docker-compose.yml`;
+3. Altere `DB_HOST` para o valor `postgres`.
 
-## License
+### Inicializando os serviços...
 
-Nest is [MIT licensed](LICENSE).
+```bash
+# Construindo a aplicação e iniciando os serviços (NestJS, Postgres)
+$ docker-compose up -d
+```
+
+### Executando Migrações ao banco de dados
+
+Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` estejam de acordo com os dados de acesso dispostos em `docker-compose.yml`.
+
+```bash
+# Configurando o banco de dados
+$ docker-compose exec app yarn create:db
+```
