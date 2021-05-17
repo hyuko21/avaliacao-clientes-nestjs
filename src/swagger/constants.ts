@@ -1,4 +1,4 @@
-export const SWAGGER_API_ROOT = 'api/docs';
+export const SWAGGER_API_ROOT = '/api/docs';
 export const SWAGGER_API_NAME =
   'API de avaliações para medir a experiência dos clientes';
 export const SWAGGER_API_DESCRIPTION =
