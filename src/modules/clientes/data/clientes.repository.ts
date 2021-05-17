@@ -9,6 +9,6 @@ export class ClientesRepository
   implements IClientesRepository
 {
   add(dto: IAddClienteDTO): Promise<ClienteEntity> {
-    throw new Error('Method not implemented.');
+    return this.repository.save(dto);
   }
 }
