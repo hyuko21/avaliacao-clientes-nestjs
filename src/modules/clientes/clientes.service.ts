@@ -18,7 +18,10 @@ export class ClientesService implements IClientesService {
     return new ClienteDTO(clienteEntity);
   }
 
-  list(): Promise<IClienteDTO[]> {
-    throw new Error('Method not implemented.');
+  async list(): Promise<IClienteDTO[]> {
+    const manyClienteEntity = await this.clientesRepository.list();
+    return manyClienteEntity.map(
+      (clienteEntity) => new ClienteDTO(clienteEntity),
+    );
   }
 }

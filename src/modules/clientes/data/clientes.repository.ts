@@ -11,4 +11,7 @@ export class ClientesRepository
   add(dto: IAddClienteDTO): Promise<ClienteEntity> {
     return this.repository.save(dto);
   }
+  list(): Promise<ClienteEntity[]> {
+    throw new Error('Method not implemented.');
+  }
 }

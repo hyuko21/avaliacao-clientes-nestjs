@@ -10,3 +10,8 @@ export const mockClienteEntity = (): ClienteEntity => ({
   telefone: Faker.phone.phoneNumber(),
   cpf: DocumentUtilTest.generateCpf(),
 });
+
+export const mockManyClienteEntity = (): ClienteEntity[] =>
+  Array.from({ length: Faker.datatype.number({ min: 4, max: 8 }) }).map(() =>
+    mockClienteEntity(),
+  );
