@@ -4,6 +4,7 @@ import { ClienteEntity } from './entities/cliente.entity';
 import { IClientesRepository } from './protocols/clientes.repository.interface';
 import { IIdClienteDTO } from '#/clientes/dtos/protocols/id-cliente.dto.interface';
 import { IModifyClienteDTO } from '#/clientes/dtos/protocols/modify-cliente.dto.interface';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(ClienteEntity)
 export class ClientesRepository
@@ -16,10 +17,29 @@ export class ClientesRepository
   list(): Promise<ClienteEntity[]> {
     return this.repository.find();
   }
-  modify(idDto: IIdClienteDTO, dto: IModifyClienteDTO): Promise<ClienteEntity> {
-    throw new Error('Method not implemented.');
+  async modify(
+    idDto: IIdClienteDTO,
+    dto: IModifyClienteDTO,
+  ): Promise<ClienteEntity> {
+    const clienteEntity = await this.repository.findOne({
+      where: { id: idDto.id },
+    });
+    if (!clienteEntity) {
+      throw new NotFoundException();
+    }
+    await this.repository.save({
+      id: idDto.id,
+      ...dto,
+    });
+    return this.repository.findOne({ where: { id: clienteEntity.id } });
   }
-  remove(idDto: IIdClienteDTO): Promise<void> {
-    throw new Error('Method not implemented.');
+  async remove(idDto: IIdClienteDTO): Promise<void> {
+    const clienteEntity = await this.repository.findOne({
+      where: { id: idDto.id },
+    });
+    if (!clienteEntity) {
+      throw new NotFoundException();
+    }
+    await this.repository.remove(clienteEntity);
   }
 }
