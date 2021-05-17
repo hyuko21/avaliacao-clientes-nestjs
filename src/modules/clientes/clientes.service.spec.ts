@@ -3,7 +3,11 @@ import { ClientesService } from './clientes.service';
 import { ClientesRepositorySpy } from './data/test/mock-clientes.repository';
 import { ClienteDTO } from './dtos/cliente.dto';
 import { IAddClienteDTO } from './dtos/protocols/add-cliente.dto.interface';
+import { IIdClienteDTO } from './dtos/protocols/id-cliente.dto.interface';
+import { IModifyClienteDTO } from './dtos/protocols/modify-cliente.dto.interface';
 import { mockAddClienteDTO } from './dtos/test/mock-add-cliente.dto';
+import { mockIdClienteDTO } from './dtos/test/mock-id-cliente.dto';
+import { mockModifyClienteDTO } from './dtos/test/mock-modify-cliente.dto';
 import { ClientesProvider } from './providers/clientes.providers.enum';
 
 describe('ClientesService', () => {
@@ -72,13 +76,12 @@ describe('ClientesService', () => {
         expect(listSpy).toHaveBeenCalledWith();
       });
 
-      it('should throw if list() throws', async () => {
-        const error = new Error('[ClientesRepository] list() Error');
-        jest.spyOn(clientesRepository, 'list').mockRejectedValueOnce(error);
+      it('should return empty array if list() return empty', async () => {
+        jest.spyOn(clientesRepository, 'list').mockResolvedValueOnce([]);
 
-        const promise = service.list();
+        const result = await service.list();
 
-        await expect(promise).rejects.toThrowError(error);
+        expect(result).toEqual([]);
       });
     });
 
@@ -86,6 +89,75 @@ describe('ClientesService', () => {
       const result = await service.list();
 
       result.forEach((item) => expect(item).toBeInstanceOf(ClienteDTO));
+    });
+  });
+
+  describe('modify()', () => {
+    let idDto: IIdClienteDTO, dto: IModifyClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+      dto = mockModifyClienteDTO();
+    });
+
+    describe('ClientesRepository dependency', () => {
+      it('should call modify() with correct params', async () => {
+        const modifySpy = jest.spyOn(clientesRepository, 'modify');
+
+        await service.modify(idDto, dto);
+
+        expect(modifySpy).toHaveBeenCalledTimes(1);
+        expect(modifySpy).toHaveBeenCalledWith(idDto, dto);
+      });
+
+      it('should throw if modify() throws', async () => {
+        const error = new Error('[ClientesRepository] modify() Error');
+        jest.spyOn(clientesRepository, 'modify').mockRejectedValueOnce(error);
+
+        const promise = service.modify(idDto, dto);
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return ClienteDTO on success', async () => {
+      const result = await service.modify(idDto, dto);
+
+      expect(result).toBeInstanceOf(ClienteDTO);
+    });
+  });
+
+  describe('remove()', () => {
+    let idDto: IIdClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+    });
+
+    describe('ClientesRepository dependency', () => {
+      it('should call remove() with correct params', async () => {
+        const removeSpy = jest.spyOn(clientesRepository, 'remove');
+
+        await service.remove(idDto);
+
+        expect(removeSpy).toHaveBeenCalledTimes(1);
+        expect(removeSpy).toHaveBeenCalledWith(idDto);
+      });
+
+      it('should throw if remove() throws', async () => {
+        const error = new Error('[ClientesRepository] remove() Error');
+        jest.spyOn(clientesRepository, 'remove').mockRejectedValueOnce(error);
+
+        const promise = service.remove(idDto);
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return undefined on success', async () => {
+      const result = await service.remove(idDto);
+
+      expect(result).toBeUndefined();
     });
   });
 });
