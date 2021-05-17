@@ -27,7 +27,7 @@ describe('ClientesService', () => {
     );
   });
 
-  describe('ClientesRepository dependency', () => {
+  describe('add()', () => {
     let dto: IAddClienteDTO;
 
     beforeEach(() => {
@@ -58,6 +58,34 @@ describe('ClientesService', () => {
       const result = await service.add(dto);
 
       expect(result).toBeInstanceOf(ClienteDTO);
+    });
+  });
+
+  describe('list()', () => {
+    describe('ClientesRepository dependency', () => {
+      it('should call list() with correct params', async () => {
+        const listSpy = jest.spyOn(clientesRepository, 'list');
+
+        await service.list();
+
+        expect(listSpy).toHaveBeenCalledTimes(1);
+        expect(listSpy).toHaveBeenCalledWith();
+      });
+
+      it('should throw if list() throws', async () => {
+        const error = new Error('[ClientesRepository] list() Error');
+        jest.spyOn(clientesRepository, 'list').mockRejectedValueOnce(error);
+
+        const promise = service.list();
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return array of ClienteDTO on success', async () => {
+      const result = await service.list();
+
+      result.forEach((item) => expect(item).toBeInstanceOf(ClienteDTO));
     });
   });
 });

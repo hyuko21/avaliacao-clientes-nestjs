@@ -70,13 +70,12 @@ describe('ClientesController', () => {
         expect(listSpy).toHaveBeenCalledTimes(1);
       });
 
-      it('should throw if list() throws', async () => {
-        const error = new Error('[ClientesService] list() Error');
-        jest.spyOn(clientesService, 'list').mockRejectedValueOnce(error);
+      it('should return empty array if list() returns empty', async () => {
+        jest.spyOn(clientesService, 'list').mockResolvedValueOnce([]);
 
-        const promise = controller.list();
+        const result = await controller.list();
 
-        await expect(promise).rejects.toThrowError(error);
+        expect(result).toEqual([]);
       });
     });
 
