@@ -25,10 +25,14 @@ export class ClientesService implements IClientesService {
       (clienteEntity) => new ClienteDTO(clienteEntity),
     );
   }
-  modify(idDto: IIdClienteDTO, dto: IModifyClienteDTO): Promise<IClienteDTO> {
-    throw new Error('Method not implemented.');
+  async modify(
+    idDto: IIdClienteDTO,
+    dto: IModifyClienteDTO,
+  ): Promise<IClienteDTO> {
+    const clienteEntity = await this.clientesRepository.modify(idDto, dto);
+    return new ClienteDTO(clienteEntity);
   }
-  remove(dto: IIdClienteDTO): Promise<void> {
-    throw new Error('Method not implemented.');
+  remove(idDto: IIdClienteDTO): Promise<void> {
+    return this.clientesRepository.remove(idDto);
   }
 }
