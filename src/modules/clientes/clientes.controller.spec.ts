@@ -59,4 +59,31 @@ describe('ClientesController', () => {
       expect(result).toEqual(clientesService.clienteDTO);
     });
   });
+
+  describe('list()', () => {
+    describe('ClientesService dependency', () => {
+      it('should call list() with correct params', async () => {
+        const listSpy = jest.spyOn(clientesService, 'list');
+
+        await controller.list();
+
+        expect(listSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it('should throw if list() throws', async () => {
+        const error = new Error('[ClientesService] list() Error');
+        jest.spyOn(clientesService, 'list').mockRejectedValueOnce(error);
+
+        const promise = controller.list();
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return array of ClienteDTO on success', async () => {
+      const result = await controller.list();
+
+      expect(result).toEqual(clientesService.manyClienteDTO);
+    });
+  });
 });
