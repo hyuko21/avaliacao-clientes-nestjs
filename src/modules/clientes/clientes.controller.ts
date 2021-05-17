@@ -1,4 +1,11 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+} from '@nestjs/common';
 import { ClienteDTO } from './dtos/cliente.dto';
 import { AddClienteDTO } from './dtos/add-cliente.dto';
 import { IClientesService } from './protocols/clientes.service.interface';
@@ -12,6 +19,7 @@ export class ClientesController {
   ) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   add(@Body() dto: AddClienteDTO): Promise<ClienteDTO> {
     return this.clientesService.add(dto);
   }
