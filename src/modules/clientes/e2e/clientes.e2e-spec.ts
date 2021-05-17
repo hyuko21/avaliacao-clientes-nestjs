@@ -9,6 +9,9 @@ import { truncate } from '@/test/db';
 import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interface';
 import { mockAddClienteDTO } from '#/clientes/dtos/test/mock-add-cliente.dto';
 import { ClientesConfig } from '#/clientes/config/clientes.config';
+import { getRepository } from 'typeorm';
+import { ClienteEntity } from '../data/entities/cliente.entity';
+import { mockManyClienteEntity } from '../data/entities/test/mock-cliente.entity';
 
 describe('Clientes e2e', () => {
   let app: INestApplication;
@@ -86,6 +89,34 @@ describe('Clientes e2e', () => {
 
     it('should create new Cliente on success', async () => {
       await requestTest.expect(201);
+    });
+  });
+
+  describe(`GET ${ClientesConfig.prefix}`, () => {
+    const baseURL = ClientesConfig.prefix;
+
+    beforeEach(() => {
+      requestTest = request(app.getHttpServer()).get(baseURL);
+    });
+
+    it('should empty array if Clientes not found', async () => {
+      await requestTest.expect(200, []);
+    });
+
+    it('should array of Cliente on success', async () => {
+      const manyClienteEntity = await getRepository(ClienteEntity).save(
+        mockManyClienteEntity(),
+      );
+
+      await requestTest.expect(200).expect(({ body }) => {
+        expect(body).toEqual(
+          manyClienteEntity.map((clienteEntity) => ({
+            ...clienteEntity,
+            criadoEm: expect.any(String),
+            atualizadoEm: expect.any(String),
+          })),
+        );
+      });
     });
   });
 });
