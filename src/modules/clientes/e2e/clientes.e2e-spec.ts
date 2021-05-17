@@ -7,6 +7,7 @@ import { mockNestApp } from '@/test/app';
 import { truncate } from '@/test/db';
 import { IAddClienteDTO } from '#/clientes/dtos/protocols/add-cliente.dto.interface';
 import { mockAddClienteDTO } from '#/clientes/dtos/test/mock-add-cliente.dto';
+import { ClientesConfig } from '../config/clientes.config';
 
 describe('Clientes e2e', () => {
   let app: INestApplication;
@@ -30,8 +31,8 @@ describe('Clientes e2e', () => {
     await app.close();
   });
 
-  describe('POST /clientes', () => {
-    const baseURL = '/clientes';
+  describe(`POST ${ClientesConfig.prefix}`, () => {
+    const baseURL = ClientesConfig.prefix;
     let requestBody: IAddClienteDTO;
 
     beforeEach(() => {
