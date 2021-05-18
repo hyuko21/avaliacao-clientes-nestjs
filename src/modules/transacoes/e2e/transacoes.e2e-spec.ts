@@ -244,35 +244,137 @@ describe('Transacoes e2e', () => {
       describe('when body is provided', () => {
         let requestBody: IModifyTransacaoDTO;
 
-        beforeEach(async () => {
-          const [clienteEntity, lojaEntity, colaboradorEntity] =
-            await Promise.all([
-              mockInsertClienteEntity(),
-              mockInsertLojaEntity(),
-              mockInsertColaboradorEntity(),
-            ]);
-          requestBody = {
-            ...mockModifyTransacaoDTO(),
-            idCliente: clienteEntity.id,
-            idLoja: lojaEntity.id,
-            idColaborador: colaboradorEntity.id,
-          };
+        beforeEach(() => {
+          requestBody = {};
         });
 
-        it('should return 200 (with modifications) on success', async () => {
-          await requestTest
-            .send(requestBody)
-            .expect(200)
-            .expect(({ body }) => {
-              expect(body).toEqual({
-                ...requestBody,
-                id: transacaoEntity.id,
-                valor: requestBody.valor.toString(),
-                data: expect.any(String),
-                criadoEm: expect.any(String),
-                atualizadoEm: expect.any(String),
-              });
+        it('should return 400 if body.valor is less than 100', async () => {
+          requestBody.valor = 99;
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: ['valor must not be less than 100'],
+            error: 'Bad Request',
+          });
+        });
+
+        it('should return 400 if body.valor is not valid number', async () => {
+          requestBody.valor = (<unknown>Faker.datatype.string()) as number;
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: [
+              'valor must not be less than 100',
+              'valor must be a number conforming to the specified constraints',
+            ],
+            error: 'Bad Request',
+          });
+        });
+
+        it('should return 400 if body.data is not valid date string', async () => {
+          requestBody.data = (<unknown>Faker.datatype.number()) as Date;
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: ['data must be a valid ISO 8601 date string'],
+            error: 'Bad Request',
+          });
+        });
+
+        it('should return 400 if body.idCliente is malformed', async () => {
+          requestBody.idCliente = Faker.datatype.string();
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: ['idCliente must be a UUID'],
+            error: 'Bad Request',
+          });
+        });
+
+        it('should return 400 if body.idLoja is malformed', async () => {
+          requestBody.idLoja = Faker.datatype.string();
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: ['idLoja must be a UUID'],
+            error: 'Bad Request',
+          });
+        });
+
+        it('should return 400 if body.idColaborador is malformed', async () => {
+          requestBody.idColaborador = Faker.datatype.string();
+
+          await requestTest.send(requestBody).expect(400, {
+            statusCode: 400,
+            message: ['idColaborador must be a UUID'],
+            error: 'Bad Request',
+          });
+        });
+
+        describe('when body.idCliente is valid', () => {
+          it('should return 404 if Cliente not found', async () => {
+            requestBody.idCliente = Faker.datatype.uuid();
+
+            await requestTest.send(requestBody).expect(404, {
+              statusCode: 404,
+              message: 'Cliente Not Found',
             });
+          });
+        });
+
+        describe('when body.idLoja is valid', () => {
+          it('should return 404 if Loja not found', async () => {
+            requestBody.idLoja = Faker.datatype.uuid();
+
+            await requestTest.send(requestBody).expect(404, {
+              statusCode: 404,
+              message: 'Loja Not Found',
+            });
+          });
+        });
+
+        describe('when body.idColaborador is valid', () => {
+          it('should return 404 if Colaborador not found', async () => {
+            requestBody.idColaborador = Faker.datatype.uuid();
+
+            await requestTest.send(requestBody).expect(404, {
+              statusCode: 404,
+              message: 'Colaborador Not Found',
+            });
+          });
+        });
+
+        describe('when body is valid', () => {
+          beforeEach(async () => {
+            const [clienteEntity, lojaEntity, colaboradorEntity] =
+              await Promise.all([
+                mockInsertClienteEntity(),
+                mockInsertLojaEntity(),
+                mockInsertColaboradorEntity(),
+              ]);
+            requestBody = {
+              ...mockModifyTransacaoDTO(),
+              idCliente: clienteEntity.id,
+              idLoja: lojaEntity.id,
+              idColaborador: colaboradorEntity.id,
+            };
+          });
+
+          it('should return 200 (with modifications) on success', async () => {
+            await requestTest
+              .send(requestBody)
+              .expect(200)
+              .expect(({ body }) => {
+                expect(body).toEqual({
+                  ...requestBody,
+                  id: transacaoEntity.id,
+                  valor: requestBody.valor.toString(),
+                  data: expect.any(String),
+                  criadoEm: expect.any(String),
+                  atualizadoEm: expect.any(String),
+                });
+              });
+          });
         });
       });
     });

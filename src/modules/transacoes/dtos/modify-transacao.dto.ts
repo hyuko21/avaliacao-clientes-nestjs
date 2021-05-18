@@ -1,11 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+  Min,
+} from 'class-validator';
 import { IModifyTransacaoDTO } from './protocols/modify-transacao.dto.interface';
 
 export class ModifyTransacaoDTO implements IModifyTransacaoDTO {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
+  @Min(100)
   valor?: number;
 
   @ApiProperty()
