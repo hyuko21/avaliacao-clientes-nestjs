@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IClienteDTO } from './dtos/protocols/cliente.dto.interface';
 import { IAddClienteDTO } from './dtos/protocols/add-cliente.dto.interface';
 import { IClientesService } from './protocols/clientes.service.interface';
@@ -37,9 +37,6 @@ export class ClientesService implements IClientesService {
   }
   async loadById(idDto: IIdClienteDTO): Promise<IClienteDTO> {
     const clienteEntity = await this.clientesRepository.loadById(idDto);
-    if (!clienteEntity) {
-      throw new NotFoundException();
-    }
     return new ClienteDTO(clienteEntity);
   }
 }

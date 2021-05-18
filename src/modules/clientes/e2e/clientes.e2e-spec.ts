@@ -132,7 +132,7 @@ describe('Clientes e2e', () => {
       `${ClientesConfig.prefix}/${idCliente}`;
 
     it('should return 400 if param :id is malformed', async () => {
-      const invalidIdCliente = Faker.datatype.string();
+      const invalidIdCliente = Faker.random.word();
 
       await agentTest.put(baseURL(invalidIdCliente)).expect(400, {
         statusCode: 400,
@@ -146,7 +146,7 @@ describe('Clientes e2e', () => {
 
       await agentTest.put(baseURL(randomIdCliente)).expect(404, {
         statusCode: 404,
-        message: 'Not Found',
+        message: 'Cliente Not Found',
       });
     });
 

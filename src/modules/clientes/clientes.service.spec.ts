@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientesService } from './clientes.service';
 import { ClientesRepositorySpy } from './data/test/mock-clientes.repository';
@@ -179,14 +178,13 @@ describe('ClientesService', () => {
         expect(loadByIdSpy).toHaveBeenCalledWith(idDto);
       });
 
-      it('should throw NotFoundException if loadById() returns falsy', async () => {
-        jest
-          .spyOn(clientesRepository, 'loadById')
-          .mockResolvedValueOnce(undefined);
+      it('should throw if loadById() throws', async () => {
+        const error = new Error('[ClientesRepository] loadById() Error');
+        jest.spyOn(clientesRepository, 'loadById').mockRejectedValueOnce(error);
 
         const promise = service.loadById(idDto);
 
-        await expect(promise).rejects.toThrowError(new NotFoundException());
+        await expect(promise).rejects.toThrowError(error);
       });
     });
 

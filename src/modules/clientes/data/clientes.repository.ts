@@ -21,12 +21,7 @@ export class ClientesRepository
     idDto: IIdClienteDTO,
     dto: IModifyClienteDTO,
   ): Promise<ClienteEntity> {
-    const clienteEntity = await this.repository.findOne({
-      where: { id: idDto.id },
-    });
-    if (!clienteEntity) {
-      throw new NotFoundException();
-    }
+    const clienteEntity = await this.loadById(idDto);
     await this.repository.save({
       id: idDto.id,
       ...dto,
@@ -34,15 +29,16 @@ export class ClientesRepository
     return this.repository.findOne({ where: { id: clienteEntity.id } });
   }
   async remove(idDto: IIdClienteDTO): Promise<void> {
+    const clienteEntity = await this.loadById(idDto);
+    await this.repository.remove(clienteEntity);
+  }
+  async loadById(idDto: IIdClienteDTO): Promise<ClienteEntity> {
     const clienteEntity = await this.repository.findOne({
       where: { id: idDto.id },
     });
     if (!clienteEntity) {
-      throw new NotFoundException();
+      throw new NotFoundException(undefined, 'Cliente Not Found');
     }
-    await this.repository.remove(clienteEntity);
-  }
-  loadById(idDto: IIdClienteDTO): Promise<ClienteEntity> {
-    return this.repository.findOne({ where: { id: idDto.id } });
+    return clienteEntity;
   }
 }

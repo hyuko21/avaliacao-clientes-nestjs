@@ -99,7 +99,9 @@ describe('ClientesRepository', () => {
     it('should throw NotFoundException if ClienteEntity not found with idDto', async () => {
       const promise = repository.modify(idDto, dto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Cliente Not Found'),
+      );
     });
 
     describe('when ClienteEntity exists', () => {
@@ -144,7 +146,9 @@ describe('ClientesRepository', () => {
     it('should throw NotFoundException if ClienteEntity not found with idDto', async () => {
       const promise = repository.remove(idDto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Cliente Not Found'),
+      );
     });
 
     describe('when ClienteEntity exists', () => {
@@ -176,10 +180,12 @@ describe('ClientesRepository', () => {
       idDto = mockIdClienteDTO();
     });
 
-    it('should return undefined if ClienteEntity not found', async () => {
-      const result = await repository.loadById(idDto);
+    it('should return throw NotFoundException if ClienteEntity not found', async () => {
+      const promise = repository.loadById(idDto);
 
-      expect(result).toBeUndefined();
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Cliente Not Found'),
+      );
     });
 
     it('should return ClienteEntity on success', async () => {
