@@ -4,6 +4,6 @@ import { IIdColaboradorDTO } from './protocols/id-colaborador.dto.interface';
 
 export class IdColaboradorDTO implements IIdColaboradorDTO {
   @ApiProperty()
-  @IsUUID('4', { message: '$property must be a valid UUID v4' })
+  @IsUUID()
   id: string;
 }

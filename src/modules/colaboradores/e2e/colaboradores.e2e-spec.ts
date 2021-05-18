@@ -94,7 +94,7 @@ describe('Colaboradores e2e', () => {
 
       await agentTest.put(baseURL(invalidIdColaborador)).expect(400, {
         statusCode: 400,
-        message: ['id must be a valid UUID v4'],
+        message: ['id must be a UUID'],
         error: 'Bad Request',
       });
     });

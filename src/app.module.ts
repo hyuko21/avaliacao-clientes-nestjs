@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CoreModule } from './config/core.module';
 import { NoCacheMiddleware } from './middlewares';
 import {
@@ -19,8 +17,6 @@ import { SWAGGER_API_ROOT } from './swagger/constants';
     LojasModule,
     ColaboradoresModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

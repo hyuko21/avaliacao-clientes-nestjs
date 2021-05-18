@@ -4,6 +4,6 @@ import { colaboradoresProviders } from './providers/colaboradores.providers';
 
 @Module({
   controllers: [ColaboradoresController],
-  providers: [...colaboradoresProviders]
+  providers: [...colaboradoresProviders],
 })
 export class ColaboradoresModule {}
