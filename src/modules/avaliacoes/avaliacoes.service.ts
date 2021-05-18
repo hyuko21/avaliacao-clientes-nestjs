@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { IAvaliacoesRepository } from './data/protocols/avaliacoes.repository.interface';
+import { AvaliacaoDTO } from './dtos/avaliacao.dto';
 import { IAddAvaliacaoDTO } from './dtos/protocols/add-avaliacao.dto.interface';
 import { IAvaliacaoDTO } from './dtos/protocols/avaliacao.dto.interface';
 import { IAvaliacoesService } from './protocols/avaliacoes.service.interface';
+import { AvaliacoesProvider } from './providers/avaliacoes.providers.enum';
 
 @Injectable()
 export class AvaliacoesService implements IAvaliacoesService {
-  add(dto: IAddAvaliacaoDTO): Promise<IAvaliacaoDTO> {
-    throw new Error('Method not implemented.');
+  constructor(
+    @Inject(AvaliacoesProvider.AVALIACOES_REPOSITORY)
+    private readonly avaliacoesRepository: IAvaliacoesRepository,
+  ) {}
+
+  async add(dto: IAddAvaliacaoDTO): Promise<IAvaliacaoDTO> {
+    const avaliacaoEntity = await this.avaliacoesRepository.add(dto);
+    return new AvaliacaoDTO(avaliacaoEntity);
   }
-  list(): Promise<IAvaliacaoDTO[]> {
-    throw new Error('Method not implemented.');
+  async list(): Promise<IAvaliacaoDTO[]> {
+    const manyAvaliacaoEntity = await this.avaliacoesRepository.list();
+    return manyAvaliacaoEntity.map(
+      (avaliacaoEntity) => new AvaliacaoDTO(avaliacaoEntity),
+    );
   }
 }
