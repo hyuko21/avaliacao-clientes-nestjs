@@ -1,10 +1,10 @@
 import Faker from 'faker';
 import { ClienteEntity } from '#/clientes/data/entities/cliente.entity';
-import { mockAbstractDTO } from '@/common/dtos/test/mock-abstract.dto';
 import { DocumentUtilTest } from '@/test/utils';
+import { mockAbstractEntity } from '@/common/entities/test/mock-abstract.entity';
 
 export const mockClienteEntity = (): ClienteEntity => ({
-  ...mockAbstractDTO(),
+  ...mockAbstractEntity(),
   nome: Faker.name.findName(),
   email: Faker.internet.email(),
   telefone:

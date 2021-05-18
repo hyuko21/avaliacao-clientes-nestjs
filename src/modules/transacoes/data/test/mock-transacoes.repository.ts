@@ -17,4 +17,7 @@ export class TransacoesRepositorySpy implements ITransacoesRepository {
   ): Promise<TransacaoEntity> {
     return this.transacaoEntity;
   }
+  async loadById(idDto: IIdTransacaoDTO): Promise<TransacaoEntity> {
+    return this.transacaoEntity;
+  }
 }

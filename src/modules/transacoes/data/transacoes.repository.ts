@@ -4,6 +4,7 @@ import { IIdTransacaoDTO } from '#/transacoes/dtos/protocols/id-transacao.dto.in
 import { IModifyTransacaoDTO } from '#/transacoes/dtos/protocols/modify-transacao.dto.interface';
 import { TransacaoEntity } from './entities/transacao.entity';
 import { ITransacoesRepository } from './protocols/transacoes.repository.interface';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(TransacaoEntity)
 export class TransacoesRepository
@@ -11,12 +12,26 @@ export class TransacoesRepository
   implements ITransacoesRepository
 {
   add(dto: IAddTransacaoDTO): Promise<TransacaoEntity> {
-    throw new Error('Method not implemented.');
+    return this.repository.save(dto);
   }
-  modify(
+  async modify(
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,
   ): Promise<TransacaoEntity> {
-    throw new Error('Method not implemented.');
+    const transacaoEntity = await this.loadById(idDto);
+    await this.repository.save({
+      id: idDto.id,
+      ...dto,
+    });
+    return this.repository.findOne({ where: { id: transacaoEntity.id } });
+  }
+  async loadById(idDto: IIdTransacaoDTO): Promise<TransacaoEntity> {
+    const transacaoEntity = await this.repository.findOne({
+      where: { id: idDto.id },
+    });
+    if (!transacaoEntity) {
+      throw new NotFoundException(undefined, 'Transacao Not Found');
+    }
+    return transacaoEntity;
   }
 }

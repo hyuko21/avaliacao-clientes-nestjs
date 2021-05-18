@@ -9,4 +9,5 @@ export interface ITransacoesRepository {
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,
   ): Promise<TransacaoEntity>;
+  loadById(idDto: IIdTransacaoDTO): Promise<TransacaoEntity>;
 }

@@ -86,11 +86,10 @@ describe('Lojas e2e', () => {
   });
 
   describe(`PUT ${LojasConfig.prefix}/:id`, () => {
-    const baseURL = (idLoja: string) =>
-      `${LojasConfig.prefix}/${idLoja}`;
+    const baseURL = (idLoja: string) => `${LojasConfig.prefix}/${idLoja}`;
 
     it('should return 400 if param :id is malformed', async () => {
-      const invalidIdLoja = Faker.datatype.string();
+      const invalidIdLoja = Faker.random.word();
 
       await agentTest.put(baseURL(invalidIdLoja)).expect(400, {
         statusCode: 400,
@@ -112,9 +111,7 @@ describe('Lojas e2e', () => {
       let lojaEntity: LojaEntity;
 
       beforeEach(async () => {
-        lojaEntity = await getRepository(LojaEntity).save(
-          mockLojaEntity(),
-        );
+        lojaEntity = await getRepository(LojaEntity).save(mockLojaEntity());
         requestTest = agentTest.put(baseURL(lojaEntity.id));
       });
 

@@ -1,9 +1,9 @@
 import Faker from 'faker';
 import { LojaEntity } from '#/lojas/data/entities/loja.entity';
-import { mockAbstractDTO } from '@/common/dtos/test/mock-abstract.dto';
+import { mockAbstractEntity } from '@/common/entities/test/mock-abstract.entity';
 
 export const mockLojaEntity = (): LojaEntity => ({
-  ...mockAbstractDTO(),
+  ...mockAbstractEntity(),
   nome: Faker.name.findName(),
 });
 
