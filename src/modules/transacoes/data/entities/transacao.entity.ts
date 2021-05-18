@@ -1,24 +1,16 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { AbstractEntity } from '@/common/entities/abstract.entity';
+import { Column, Entity } from 'typeorm';
 
 @Entity('transacoes')
-export class TransacaoEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class TransacaoEntity extends AbstractEntity {
   @Column()
   valor: number;
-  @Column({ name: 'criado_em' })
-  criadoEm: Date;
+  @Column()
+  data: Date;
   @Column({ name: 'id_cliente' })
   idCliente: string;
   @Column({ name: 'id_loja' })
   idLoja: string;
   @Column({ name: 'id_colaborador' })
   idColaborador: string;
-  @UpdateDateColumn({ name: 'atualizado_em' })
-  atualizadoEm: Date;
 }

@@ -1,6 +1,6 @@
 export interface IAddTransacaoDTO {
   valor: number;
-  criadoEm: Date;
+  data: Date;
   idCliente: string;
   idLoja: string;
   idColaborador: string;

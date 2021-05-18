@@ -11,7 +11,7 @@ export class ModifyTransacaoDTO implements IModifyTransacaoDTO {
   @ApiProperty()
   @IsOptional()
   @IsDateString()
-  criadoEm?: Date;
+  data?: Date;
 
   @ApiProperty()
   @IsOptional()

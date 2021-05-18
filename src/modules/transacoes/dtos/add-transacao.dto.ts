@@ -9,7 +9,7 @@ export class AddTransacaoDTO implements IAddTransacaoDTO {
 
   @ApiProperty()
   @IsDateString()
-  criadoEm: Date;
+  data: Date;
 
   @ApiProperty()
   @IsUUID()

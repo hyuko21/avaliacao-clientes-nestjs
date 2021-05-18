@@ -3,7 +3,7 @@ import { IAddTransacaoDTO } from '#/transacoes/dtos/protocols/add-transacao.dto.
 
 export const mockAddTransacaoDTO = (): IAddTransacaoDTO => ({
   valor: Faker.datatype.number(),
-  criadoEm: Faker.date.recent(),
+  data: Faker.date.recent(),
   idCliente: Faker.datatype.uuid(),
   idLoja: Faker.datatype.uuid(),
   idColaborador: Faker.datatype.uuid(),
