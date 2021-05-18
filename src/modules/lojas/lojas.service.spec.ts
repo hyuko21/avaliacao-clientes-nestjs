@@ -160,4 +160,38 @@ describe('LojasService', () => {
       expect(result).toBeUndefined();
     });
   });
+
+  describe('loadById()', () => {
+    let idDto: IIdLojaDTO;
+
+    beforeEach(() => {
+      idDto = mockIdLojaDTO();
+    });
+
+    describe('LojasRepository dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(lojasRepository, 'loadById');
+
+        await service.loadById(idDto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith(idDto);
+      });
+
+      it('should throw if loadById() throws', async () => {
+        const error = new Error('[LojasRepository] loadById() Error');
+        jest.spyOn(lojasRepository, 'loadById').mockRejectedValueOnce(error);
+
+        const promise = service.loadById(idDto);
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return LojaDTO on success', async () => {
+      const result = await service.loadById(idDto);
+
+      expect(result).toBeInstanceOf(LojaDTO);
+    });
+  });
 });

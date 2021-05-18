@@ -21,18 +21,17 @@ export class LojasService implements ILojasService {
   }
   async list(): Promise<ILojaDTO[]> {
     const manyLojaEntity = await this.lojasRepository.list();
-    return manyLojaEntity.map(
-      (lojaEntity) => new LojaDTO(lojaEntity),
-    );
+    return manyLojaEntity.map((lojaEntity) => new LojaDTO(lojaEntity));
   }
-  async modify(
-    idDto: IIdLojaDTO,
-    dto: IModifyLojaDTO,
-  ): Promise<ILojaDTO> {
+  async modify(idDto: IIdLojaDTO, dto: IModifyLojaDTO): Promise<ILojaDTO> {
     const lojaEntity = await this.lojasRepository.modify(idDto, dto);
     return new LojaDTO(lojaEntity);
   }
   remove(idDto: IIdLojaDTO): Promise<void> {
     return this.lojasRepository.remove(idDto);
+  }
+  async loadById(idDto: IIdLojaDTO): Promise<ILojaDTO> {
+    const lojaEntity = await this.lojasRepository.loadById(idDto);
+    return new LojaDTO(lojaEntity);
   }
 }
