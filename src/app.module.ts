@@ -6,6 +6,7 @@ import {
   TransacoesModule,
   LojasModule,
   ColaboradoresModule,
+  AvaliacoesModule,
 } from './modules';
 import { SWAGGER_API_ROOT } from './swagger/constants';
 
@@ -16,6 +17,7 @@ import { SWAGGER_API_ROOT } from './swagger/constants';
     TransacoesModule,
     LojasModule,
     ColaboradoresModule,
+    AvaliacoesModule,
   ],
 })
 export class AppModule implements NestModule {

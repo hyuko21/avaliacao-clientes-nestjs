@@ -24,4 +24,7 @@ export class TransacoesServiceSpy implements ITransacoesService {
   ): Promise<ITransacaoDTO> {
     return this.transacaoDTO;
   }
+  async loadById(idDto: IIdTransacaoDTO): Promise<ITransacaoDTO> {
+    return this.transacaoDTO;
+  }
 }

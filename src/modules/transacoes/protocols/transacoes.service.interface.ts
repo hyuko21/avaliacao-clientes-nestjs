@@ -10,4 +10,5 @@ export interface ITransacoesService {
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,
   ): Promise<ITransacaoDTO>;
+  loadById(idDto: IIdTransacaoDTO): Promise<ITransacaoDTO>;
 }

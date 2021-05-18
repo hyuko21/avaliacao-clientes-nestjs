@@ -126,4 +126,40 @@ describe('TransacoesService', () => {
       expect(result).toBeInstanceOf(TransacaoDTO);
     });
   });
+
+  describe('loadById()', () => {
+    let idDto: IIdTransacaoDTO;
+
+    beforeEach(() => {
+      idDto = mockIdTransacaoDTO();
+    });
+
+    describe('TransacoesRepository dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(transacoesRepository, 'loadById');
+
+        await service.loadById(idDto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith(idDto);
+      });
+
+      it('should throw if loadById() throws', async () => {
+        const error = new Error('[TransacoesRepository] loadById() Error');
+        jest
+          .spyOn(transacoesRepository, 'loadById')
+          .mockRejectedValueOnce(error);
+
+        const promise = service.loadById(idDto);
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return TransacaoDTO on success', async () => {
+      const result = await service.loadById(idDto);
+
+      expect(result).toBeInstanceOf(TransacaoDTO);
+    });
+  });
 });

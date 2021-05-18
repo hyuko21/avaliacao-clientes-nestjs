@@ -32,4 +32,7 @@ export class TransacoesService implements ITransacoesService {
     const transacaoEntity = await this.transacoesRepository.modify(idDto, dto);
     return new TransacaoDTO(transacaoEntity);
   }
+  async loadById(idDto: IIdTransacaoDTO): Promise<ITransacaoDTO> {
+    return this.loadById(idDto);
+  }
 }
