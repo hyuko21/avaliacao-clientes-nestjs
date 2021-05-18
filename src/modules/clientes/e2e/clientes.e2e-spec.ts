@@ -235,4 +235,52 @@ describe('Clientes e2e', () => {
       });
     });
   });
+
+  describe(`DELETE ${ClientesConfig.prefix}/:id`, () => {
+    const baseURL = (idCliente: string) =>
+      `${ClientesConfig.prefix}/${idCliente}`;
+
+    it('should return 400 if param :id is malformed', async () => {
+      const invalidIdCliente = Faker.random.word();
+
+      await agentTest.delete(baseURL(invalidIdCliente)).expect(400, {
+        statusCode: 400,
+        message: ['id must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 404 if Cliente not found', async () => {
+      const randomIdCliente = Faker.datatype.uuid();
+
+      await agentTest.delete(baseURL(randomIdCliente)).expect(404, {
+        statusCode: 404,
+        message: 'Cliente Not Found',
+      });
+    });
+
+    describe('when Cliente exists', () => {
+      let clienteEntity: ClienteEntity;
+
+      beforeEach(async () => {
+        const manyClienteEntity = await getRepository(ClienteEntity).save(
+          mockManyClienteEntity(),
+        );
+        clienteEntity = Faker.random.arrayElement(manyClienteEntity);
+        requestTest = agentTest.delete(baseURL(clienteEntity.id));
+      });
+
+      it('should return 204 and delete correct Cliente', async () => {
+        await requestTest.expect(204);
+        const [countClienteEntity, countManyClienteEntity] = await Promise.all([
+          getRepository(ClienteEntity).count({
+            where: { id: clienteEntity.id },
+          }),
+          getRepository(ClienteEntity).count(),
+        ]);
+        expect(countClienteEntity).toBe(0);
+        expect(countManyClienteEntity).toBeGreaterThan(0);
+      });
+    });
+  });
 });

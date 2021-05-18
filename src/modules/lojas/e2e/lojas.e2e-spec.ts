@@ -103,7 +103,7 @@ describe('Lojas e2e', () => {
 
       await agentTest.put(baseURL(randomIdLoja)).expect(404, {
         statusCode: 404,
-        message: 'Not Found',
+        message: 'Loja Not Found',
       });
     });
 
@@ -145,6 +145,53 @@ describe('Lojas e2e', () => {
               });
             });
         });
+      });
+    });
+  });
+
+  describe(`DELETE ${LojasConfig.prefix}/:id`, () => {
+    const baseURL = (idLoja: string) => `${LojasConfig.prefix}/${idLoja}`;
+
+    it('should return 400 if param :id is malformed', async () => {
+      const invalidIdLoja = Faker.random.word();
+
+      await agentTest.delete(baseURL(invalidIdLoja)).expect(400, {
+        statusCode: 400,
+        message: ['id must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 404 if Loja not found', async () => {
+      const randomIdLoja = Faker.datatype.uuid();
+
+      await agentTest.delete(baseURL(randomIdLoja)).expect(404, {
+        statusCode: 404,
+        message: 'Loja Not Found',
+      });
+    });
+
+    describe('when Loja exists', () => {
+      let lojaEntity: LojaEntity;
+
+      beforeEach(async () => {
+        const manyLojaEntity = await getRepository(LojaEntity).save(
+          mockManyLojaEntity(),
+        );
+        lojaEntity = Faker.random.arrayElement(manyLojaEntity);
+        requestTest = agentTest.delete(baseURL(lojaEntity.id));
+      });
+
+      it('should return 204 and delete correct Loja', async () => {
+        await requestTest.expect(204);
+        const [countLojaEntity, countManyLojaEntity] = await Promise.all([
+          getRepository(LojaEntity).count({
+            where: { id: lojaEntity.id },
+          }),
+          getRepository(LojaEntity).count(),
+        ]);
+        expect(countLojaEntity).toBe(0);
+        expect(countManyLojaEntity).toBeGreaterThan(0);
       });
     });
   });

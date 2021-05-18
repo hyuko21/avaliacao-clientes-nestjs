@@ -42,10 +42,12 @@ describe('ColaboradoresRepository', () => {
     it('should insert new ColaboradorEntity on success', async () => {
       await repository.add(dto);
 
-      const countColaboradorEntity = await getRepository(ColaboradorEntity).count({
+      const countColaboradorEntity = await getRepository(
+        ColaboradorEntity,
+      ).count({
         where: {
           nome: dto.nome,
-        }
+        },
       });
 
       expect(countColaboradorEntity).toBe(1);
@@ -54,10 +56,12 @@ describe('ColaboradoresRepository', () => {
     it('should return ColaboradorEntity on success', async () => {
       const result = await repository.add(dto);
 
-      const actualColaboradorEntity = await getRepository(ColaboradorEntity).findOne({
+      const actualColaboradorEntity = await getRepository(
+        ColaboradorEntity,
+      ).findOne({
         where: {
           nome: dto.nome,
-        }
+        },
       });
 
       expect(result).toEqual(actualColaboradorEntity);
@@ -93,7 +97,9 @@ describe('ColaboradoresRepository', () => {
     it('should throw NotFoundException if ColaboradorEntity not found with idDto', async () => {
       const promise = repository.modify(idDto, dto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Colaborador Not Found'),
+      );
     });
 
     describe('when ColaboradorEntity exists', () => {
@@ -109,7 +115,9 @@ describe('ColaboradoresRepository', () => {
       it('should modify ColaboradorEntity data on success', async () => {
         await repository.modify(idDto, dto);
 
-        const actualColaboradorEntity = await getRepository(ColaboradorEntity).findOne({
+        const actualColaboradorEntity = await getRepository(
+          ColaboradorEntity,
+        ).findOne({
           where: { id: colaboradorEntity.id },
         });
 
@@ -119,7 +127,9 @@ describe('ColaboradoresRepository', () => {
       it('should return ColaboradorEntity on success', async () => {
         const result = await repository.modify(idDto, dto);
 
-        const actualColaboradorEntity = await getRepository(ColaboradorEntity).findOne({
+        const actualColaboradorEntity = await getRepository(
+          ColaboradorEntity,
+        ).findOne({
           where: { id: idDto.id },
         });
 
@@ -138,7 +148,9 @@ describe('ColaboradoresRepository', () => {
     it('should throw NotFoundException if ColaboradorEntity not found with idDto', async () => {
       const promise = repository.remove(idDto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Colaborador Not Found'),
+      );
     });
 
     describe('when ColaboradorEntity exists', () => {
@@ -154,7 +166,9 @@ describe('ColaboradoresRepository', () => {
       it('should remove correct ColaboradorEntity on success', async () => {
         await repository.remove(idDto);
 
-        const countColaboradorEntity = await getRepository(ColaboradorEntity).count({
+        const countColaboradorEntity = await getRepository(
+          ColaboradorEntity,
+        ).count({
           where: { id: idDto.id },
         });
 

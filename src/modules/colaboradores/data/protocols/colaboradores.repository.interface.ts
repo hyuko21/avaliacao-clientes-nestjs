@@ -6,6 +6,10 @@ import { IModifyColaboradorDTO } from '#/colaboradores/dtos/protocols/modify-col
 export interface IColaboradoresRepository {
   add(dto: IAddColaboradorDTO): Promise<ColaboradorEntity>;
   list(): Promise<ColaboradorEntity[]>;
-  modify(idDto: IIdColaboradorDTO, dto: IModifyColaboradorDTO): Promise<ColaboradorEntity>;
+  modify(
+    idDto: IIdColaboradorDTO,
+    dto: IModifyColaboradorDTO,
+  ): Promise<ColaboradorEntity>;
   remove(idDto: IIdColaboradorDTO): Promise<void>;
+  loadById(idDto: IIdColaboradorDTO): Promise<ColaboradorEntity>;
 }

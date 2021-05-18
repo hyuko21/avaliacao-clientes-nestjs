@@ -27,4 +27,7 @@ export class ColaboradoresRepositorySpy implements IColaboradoresRepository {
   remove(idDto: IIdColaboradorDTO): Promise<void> {
     return;
   }
+  async loadById(idDto: IIdColaboradorDTO): Promise<ColaboradorEntity> {
+    return this.colaboradorEntity;
+  }
 }

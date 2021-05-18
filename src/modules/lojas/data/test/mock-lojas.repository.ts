@@ -18,13 +18,13 @@ export class LojasRepositorySpy implements ILojasRepository {
   async list(): Promise<LojaEntity[]> {
     return this.manyLojaEntity;
   }
-  async modify(
-    idDto: IIdLojaDTO,
-    dto: IModifyLojaDTO,
-  ): Promise<LojaEntity> {
+  async modify(idDto: IIdLojaDTO, dto: IModifyLojaDTO): Promise<LojaEntity> {
     return this.lojaEntity;
   }
   remove(idDto: IIdLojaDTO): Promise<void> {
     return;
+  }
+  async loadById(idDto: IIdLojaDTO): Promise<LojaEntity> {
+    return this.lojaEntity;
   }
 }

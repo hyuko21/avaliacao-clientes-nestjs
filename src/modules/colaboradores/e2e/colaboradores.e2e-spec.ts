@@ -104,7 +104,7 @@ describe('Colaboradores e2e', () => {
 
       await agentTest.put(baseURL(randomIdColaborador)).expect(404, {
         statusCode: 404,
-        message: 'Not Found',
+        message: 'Colaborador Not Found',
       });
     });
 
@@ -148,6 +148,55 @@ describe('Colaboradores e2e', () => {
               });
             });
         });
+      });
+    });
+  });
+
+  describe(`DELETE ${ColaboradoresConfig.prefix}/:id`, () => {
+    const baseURL = (idColaborador: string) =>
+      `${ColaboradoresConfig.prefix}/${idColaborador}`;
+
+    it('should return 400 if param :id is malformed', async () => {
+      const invalidIdColaborador = Faker.random.word();
+
+      await agentTest.delete(baseURL(invalidIdColaborador)).expect(400, {
+        statusCode: 400,
+        message: ['id must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 404 if Colaborador not found', async () => {
+      const randomIdColaborador = Faker.datatype.uuid();
+
+      await agentTest.delete(baseURL(randomIdColaborador)).expect(404, {
+        statusCode: 404,
+        message: 'Colaborador Not Found',
+      });
+    });
+
+    describe('when Colaborador exists', () => {
+      let colaboradorEntity: ColaboradorEntity;
+
+      beforeEach(async () => {
+        const manyColaboradorEntity = await getRepository(
+          ColaboradorEntity,
+        ).save(mockManyColaboradorEntity());
+        colaboradorEntity = Faker.random.arrayElement(manyColaboradorEntity);
+        requestTest = agentTest.delete(baseURL(colaboradorEntity.id));
+      });
+
+      it('should return 204 and delete correct Colaborador', async () => {
+        await requestTest.expect(204);
+        const [countColaboradorEntity, countManyColaboradorEntity] =
+          await Promise.all([
+            getRepository(ColaboradorEntity).count({
+              where: { id: colaboradorEntity.id },
+            }),
+            getRepository(ColaboradorEntity).count(),
+          ]);
+        expect(countColaboradorEntity).toBe(0);
+        expect(countManyColaboradorEntity).toBeGreaterThan(0);
       });
     });
   });

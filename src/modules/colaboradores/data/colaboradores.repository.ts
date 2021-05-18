@@ -21,12 +21,7 @@ export class ColaboradoresRepository
     idDto: IIdColaboradorDTO,
     dto: IModifyColaboradorDTO,
   ): Promise<ColaboradorEntity> {
-    const colaboradorEntity = await this.repository.findOne({
-      where: { id: idDto.id },
-    });
-    if (!colaboradorEntity) {
-      throw new NotFoundException();
-    }
+    const colaboradorEntity = await this.loadById(idDto);
     await this.repository.save({
       id: idDto.id,
       ...dto,
@@ -34,12 +29,16 @@ export class ColaboradoresRepository
     return this.repository.findOne({ where: { id: colaboradorEntity.id } });
   }
   async remove(idDto: IIdColaboradorDTO): Promise<void> {
+    const colaboradorEntity = await this.loadById(idDto);
+    await this.repository.remove(colaboradorEntity);
+  }
+  async loadById(idDto: IIdColaboradorDTO): Promise<ColaboradorEntity> {
     const colaboradorEntity = await this.repository.findOne({
       where: { id: idDto.id },
     });
     if (!colaboradorEntity) {
-      throw new NotFoundException();
+      throw new NotFoundException(undefined, 'Colaborador Not Found');
     }
-    await this.repository.remove(colaboradorEntity);
+    return colaboradorEntity;
   }
 }

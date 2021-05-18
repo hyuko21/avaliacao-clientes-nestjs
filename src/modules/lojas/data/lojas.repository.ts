@@ -17,16 +17,8 @@ export class LojasRepository
   list(): Promise<LojaEntity[]> {
     return this.repository.find();
   }
-  async modify(
-    idDto: IIdLojaDTO,
-    dto: IModifyLojaDTO,
-  ): Promise<LojaEntity> {
-    const lojaEntity = await this.repository.findOne({
-      where: { id: idDto.id },
-    });
-    if (!lojaEntity) {
-      throw new NotFoundException();
-    }
+  async modify(idDto: IIdLojaDTO, dto: IModifyLojaDTO): Promise<LojaEntity> {
+    const lojaEntity = await this.loadById(idDto);
     await this.repository.save({
       id: idDto.id,
       ...dto,
@@ -34,12 +26,16 @@ export class LojasRepository
     return this.repository.findOne({ where: { id: lojaEntity.id } });
   }
   async remove(idDto: IIdLojaDTO): Promise<void> {
+    const lojaEntity = await this.loadById(idDto);
+    await this.repository.remove(lojaEntity);
+  }
+  async loadById(idDto: IIdLojaDTO): Promise<LojaEntity> {
     const lojaEntity = await this.repository.findOne({
       where: { id: idDto.id },
     });
     if (!lojaEntity) {
-      throw new NotFoundException();
+      throw new NotFoundException(undefined, 'Loja Not Found');
     }
-    await this.repository.remove(lojaEntity);
+    return lojaEntity;
   }
 }

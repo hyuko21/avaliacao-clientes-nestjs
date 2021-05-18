@@ -93,16 +93,16 @@ describe('LojasRepository', () => {
     it('should throw NotFoundException if LojaEntity not found with idDto', async () => {
       const promise = repository.modify(idDto, dto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Loja Not Found'),
+      );
     });
 
     describe('when LojaEntity exists', () => {
       let lojaEntity: LojaEntity;
 
       beforeEach(async () => {
-        lojaEntity = await getRepository(LojaEntity).save(
-          mockLojaEntity(),
-        );
+        lojaEntity = await getRepository(LojaEntity).save(mockLojaEntity());
         idDto.id = lojaEntity.id;
       });
 
@@ -138,7 +138,9 @@ describe('LojasRepository', () => {
     it('should throw NotFoundException if LojaEntity not found with idDto', async () => {
       const promise = repository.remove(idDto);
 
-      await expect(promise).rejects.toThrowError(new NotFoundException());
+      await expect(promise).rejects.toThrowError(
+        new NotFoundException(undefined, 'Loja Not Found'),
+      );
     });
 
     describe('when LojaEntity exists', () => {

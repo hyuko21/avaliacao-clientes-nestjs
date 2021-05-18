@@ -8,4 +8,5 @@ export interface ILojasRepository {
   list(): Promise<LojaEntity[]>;
   modify(idDto: IIdLojaDTO, dto: IModifyLojaDTO): Promise<LojaEntity>;
   remove(idDto: IIdLojaDTO): Promise<void>;
+  loadById(idDto: IIdLojaDTO): Promise<LojaEntity>;
 }
