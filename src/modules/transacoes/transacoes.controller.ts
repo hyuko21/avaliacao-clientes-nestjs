@@ -48,6 +48,7 @@ export class TransacoesController {
 
   @ApiCreatedResponse({ type: TransacaoDTO })
   @ApiBadRequestResponse({ schema: ErrorSchema })
+  @ApiNotFoundResponse({ schema: ErrorSchema })
   @ApiInternalServerErrorResponse()
   @Post()
   @HttpCode(HttpStatus.CREATED)
