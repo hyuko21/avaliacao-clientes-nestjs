@@ -198,6 +198,41 @@ describe('Transacoes e2e', () => {
     });
   });
 
+  describe(`GET ${TransacoesConfig.prefix}`, () => {
+    const baseURL = TransacoesConfig.prefix;
+
+    beforeEach(() => {
+      requestTest = agentTest.get(baseURL);
+    });
+
+    it('should empty array if Transacoes not found', async () => {
+      await requestTest.expect(200, []);
+    });
+
+    it('should array of Transacao on success', async () => {
+      const manyTransacaoEntity = await Promise.all([
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+      ]);
+
+      await requestTest.expect(200).expect(({ body }) => {
+        expect(body).toEqual(
+          expect.arrayContaining(
+            manyTransacaoEntity.map((transacaoEntity) => ({
+              ...transacaoEntity,
+              valor: transacaoEntity.valor.toString(),
+              data: expect.any(String),
+              criadoEm: expect.any(String),
+              atualizadoEm: expect.any(String),
+            })),
+          ),
+        );
+      });
+    });
+  });
+
   describe(`PUT ${TransacoesConfig.prefix}/:id`, () => {
     const baseURL = (idTransacao: string) =>
       `${TransacoesConfig.prefix}/${idTransacao}`;
