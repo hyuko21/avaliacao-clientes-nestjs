@@ -2,6 +2,13 @@
 
 Sistema para medir o nível de satisfação que os clientes têm da marca. Para isso, o cliente poderá dar uma nota (0 a 10), e um comentário em que ele deve indicar o que gostou ou não.
 
+- ## Diagrama ER
+
+Para visualizar o diagrama de entidade-relacionamento do banco de dados:
+
+1. Acessar https://draw.io/
+2. Importar o arquivo `avaliacoes-clientes.drawio`
+
 - ## Executando com Docker
 
 Considerando que você já possui `docker` e `docker-compose` instalados e configurados, apropriadamente.
@@ -27,12 +34,15 @@ Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` e
 # Configurando o banco de dados
 $ docker-compose exec app yarn create:db
 ```
+
 ## Instalação
 
 ```bash
 $ yarn install
 ```
+
 ## Executando Migrações ao banco de dados
+
 Atenção! Certifique-se de que as configurações presentes em `ormconfig.js` estejam de acordo com os dados de acesso dispostos em `docker-compose.yml`.
 
 ```bash
@@ -68,5 +78,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-
