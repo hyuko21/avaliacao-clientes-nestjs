@@ -1,4 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ClientesProvider } from '#/clientes/providers/clientes.providers.enum';
+import { ClientesServiceSpy } from '#/clientes/test/mock-clientes.service';
+import { ColaboradoresProvider } from '#/colaboradores/providers/colaboradores.providers.enum';
+import { ColaboradoresServiceSpy } from '#/colaboradores/test/mock-colaboradores.service';
+import { LojasProvider } from '#/lojas/providers/lojas.providers.enum';
+import { LojasServiceSpy } from '#/lojas/test/mock-lojas.service';
 import { IAddTransacaoDTO } from './dtos/protocols/add-transacao.dto.interface';
 import { IIdTransacaoDTO } from './dtos/protocols/id-transacao.dto.interface';
 import { IModifyTransacaoDTO } from './dtos/protocols/modify-transacao.dto.interface';
@@ -12,6 +18,9 @@ import { TransacoesController } from './transacoes.controller';
 describe('TransacoesController', () => {
   let controller: TransacoesController;
   let transacoesService: TransacoesServiceSpy;
+  let clientesService: ClientesServiceSpy;
+  let lojasService: LojasServiceSpy;
+  let colaboradoresService: ColaboradoresServiceSpy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,12 +30,31 @@ describe('TransacoesController', () => {
           provide: TransacoesProvider.TRANSACOES_SERVICE,
           useClass: TransacoesServiceSpy,
         },
+        {
+          provide: ClientesProvider.CLIENTES_SERVICE,
+          useClass: ClientesServiceSpy,
+        },
+        {
+          provide: LojasProvider.LOJAS_SERVICE,
+          useClass: LojasServiceSpy,
+        },
+        {
+          provide: ColaboradoresProvider.COLABORADORES_SERVICE,
+          useClass: ColaboradoresServiceSpy,
+        },
       ],
     }).compile();
 
     controller = module.get<TransacoesController>(TransacoesController);
     transacoesService = module.get<TransacoesServiceSpy>(
       TransacoesProvider.TRANSACOES_SERVICE,
+    );
+    clientesService = module.get<ClientesServiceSpy>(
+      ClientesProvider.CLIENTES_SERVICE,
+    );
+    lojasService = module.get<LojasServiceSpy>(LojasProvider.LOJAS_SERVICE);
+    colaboradoresService = module.get<ColaboradoresServiceSpy>(
+      ColaboradoresProvider.COLABORADORES_SERVICE,
     );
   });
 
@@ -37,6 +65,39 @@ describe('TransacoesController', () => {
       dto = mockAddTransacaoDTO();
     });
 
+    describe('ClientesService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(clientesService, 'loadById');
+
+        await controller.add(dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idCliente });
+      });
+    });
+
+    describe('LojasService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(lojasService, 'loadById');
+
+        await controller.add(dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idLoja });
+      });
+    });
+
+    describe('ColaboradoresService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(colaboradoresService, 'loadById');
+
+        await controller.add(dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idColaborador });
+      });
+    });
+
     describe('TransacoesService dependency', () => {
       it('should call add() with correct params', async () => {
         const addSpy = jest.spyOn(transacoesService, 'add');
@@ -44,7 +105,12 @@ describe('TransacoesController', () => {
         await controller.add(dto);
 
         expect(addSpy).toHaveBeenCalledTimes(1);
-        expect(addSpy).toHaveBeenCalledWith(dto);
+        expect(addSpy).toHaveBeenCalledWith({
+          ...dto,
+          idCliente: clientesService.clienteDTO.id,
+          idLoja: lojasService.lojaDTO.id,
+          idColaborador: colaboradoresService.colaboradorDTO.id,
+        });
       });
 
       it('should throw if add() throws', async () => {
@@ -72,6 +138,39 @@ describe('TransacoesController', () => {
       dto = mockModifyTransacaoDTO();
     });
 
+    describe('ClientesService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(clientesService, 'loadById');
+
+        await controller.modify(idDto, dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idCliente });
+      });
+    });
+
+    describe('LojasService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(lojasService, 'loadById');
+
+        await controller.modify(idDto, dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idLoja });
+      });
+    });
+
+    describe('ColaboradoresService dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(colaboradoresService, 'loadById');
+
+        await controller.modify(idDto, dto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith({ id: dto.idColaborador });
+      });
+    });
+
     describe('TransacoesService dependency', () => {
       it('should call modify() with correct params', async () => {
         const modifySpy = jest.spyOn(transacoesService, 'modify');
@@ -79,7 +178,12 @@ describe('TransacoesController', () => {
         await controller.modify(idDto, dto);
 
         expect(modifySpy).toHaveBeenCalledTimes(1);
-        expect(modifySpy).toHaveBeenCalledWith(idDto, dto);
+        expect(modifySpy).toHaveBeenCalledWith(idDto, {
+          ...dto,
+          idCliente: clientesService.clienteDTO.id,
+          idLoja: lojasService.lojaDTO.id,
+          idColaborador: colaboradoresService.colaboradorDTO.id,
+        });
       });
 
       it('should throw if modify() throws', async () => {
@@ -89,6 +193,99 @@ describe('TransacoesController', () => {
         const promise = controller.modify(idDto, dto);
 
         await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    describe('when dto.idCliente is not provided', () => {
+      beforeEach(() => {
+        dto.idCliente = undefined;
+      });
+
+      describe('ClientesService dependency', () => {
+        it('should not call loadById()', async () => {
+          const loadByIdSpy = jest.spyOn(clientesService, 'loadById');
+
+          await controller.modify(idDto, dto);
+
+          expect(loadByIdSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('TransacoesService dependency', () => {
+        it('should call modify() with correct params', async () => {
+          const modifySpy = jest.spyOn(transacoesService, 'modify');
+
+          await controller.modify(idDto, dto);
+
+          expect(modifySpy).toHaveBeenCalledTimes(1);
+          expect(modifySpy).toHaveBeenCalledWith(idDto, {
+            ...dto,
+            idLoja: lojasService.lojaDTO.id,
+            idColaborador: colaboradoresService.colaboradorDTO.id,
+          });
+        });
+      });
+    });
+
+    describe('when dto.idLoja is not provided', () => {
+      beforeEach(() => {
+        dto.idLoja = undefined;
+      });
+
+      describe('LojasService dependency', () => {
+        it('should not call loadById()', async () => {
+          const loadByIdSpy = jest.spyOn(lojasService, 'loadById');
+
+          await controller.modify(idDto, dto);
+
+          expect(loadByIdSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('TransacoesService dependency', () => {
+        it('should call modify() with correct params', async () => {
+          const modifySpy = jest.spyOn(transacoesService, 'modify');
+
+          await controller.modify(idDto, dto);
+
+          expect(modifySpy).toHaveBeenCalledTimes(1);
+          expect(modifySpy).toHaveBeenCalledWith(idDto, {
+            ...dto,
+            idCliente: clientesService.clienteDTO.id,
+            idColaborador: colaboradoresService.colaboradorDTO.id,
+          });
+        });
+      });
+    });
+
+    describe('when dto.idColaborador is not provided', () => {
+      beforeEach(() => {
+        dto.idColaborador = undefined;
+      });
+
+      describe('ColaboradoresService dependency', () => {
+        it('should not call loadById()', async () => {
+          const loadByIdSpy = jest.spyOn(colaboradoresService, 'loadById');
+
+          await controller.modify(idDto, dto);
+
+          expect(loadByIdSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('TransacoesService dependency', () => {
+        it('should call modify() with correct params', async () => {
+          const modifySpy = jest.spyOn(transacoesService, 'modify');
+
+          await controller.modify(idDto, dto);
+
+          expect(modifySpy).toHaveBeenCalledTimes(1);
+          expect(modifySpy).toHaveBeenCalledWith(idDto, {
+            ...dto,
+            idCliente: clientesService.clienteDTO.id,
+            idLoja: lojasService.lojaDTO.id,
+          });
+        });
       });
     });
 

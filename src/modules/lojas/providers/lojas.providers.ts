@@ -15,8 +15,7 @@ export const lojasProviders: Provider[] = [
   ...lojasServices,
   {
     provide: LojasProvider.LOJAS_REPOSITORY,
-    useFactory: (conn: Connection) =>
-      conn.getCustomRepository(LojasRepository),
+    useFactory: (conn: Connection) => conn.getCustomRepository(LojasRepository),
     inject: [Connection],
   },
 ];
