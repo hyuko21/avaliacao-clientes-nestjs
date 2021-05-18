@@ -112,7 +112,9 @@ describe('ColaboradoresService', () => {
 
       it('should throw if modify() throws', async () => {
         const error = new Error('[ColaboradoresRepository] modify() Error');
-        jest.spyOn(colaboradoresRepository, 'modify').mockRejectedValueOnce(error);
+        jest
+          .spyOn(colaboradoresRepository, 'modify')
+          .mockRejectedValueOnce(error);
 
         const promise = service.modify(idDto, dto);
 
@@ -146,7 +148,9 @@ describe('ColaboradoresService', () => {
 
       it('should throw if remove() throws', async () => {
         const error = new Error('[ColaboradoresRepository] remove() Error');
-        jest.spyOn(colaboradoresRepository, 'remove').mockRejectedValueOnce(error);
+        jest
+          .spyOn(colaboradoresRepository, 'remove')
+          .mockRejectedValueOnce(error);
 
         const promise = service.remove(idDto);
 
@@ -158,6 +162,42 @@ describe('ColaboradoresService', () => {
       const result = await service.remove(idDto);
 
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('loadById()', () => {
+    let idDto: IIdColaboradorDTO;
+
+    beforeEach(() => {
+      idDto = mockIdColaboradorDTO();
+    });
+
+    describe('ColaboradoresRepository dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(colaboradoresRepository, 'loadById');
+
+        await service.loadById(idDto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith(idDto);
+      });
+
+      it('should throw if loadById() throws', async () => {
+        const error = new Error('[ColaboradoresRepository] loadById() Error');
+        jest
+          .spyOn(colaboradoresRepository, 'loadById')
+          .mockRejectedValueOnce(error);
+
+        const promise = service.loadById(idDto);
+
+        await expect(promise).rejects.toThrowError(error);
+      });
+    });
+
+    it('should return ColaboradorDTO on success', async () => {
+      const result = await service.loadById(idDto);
+
+      expect(result).toBeInstanceOf(ColaboradorDTO);
     });
   });
 });

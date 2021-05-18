@@ -29,10 +29,19 @@ export class ColaboradoresService implements IColaboradoresService {
     idDto: IIdColaboradorDTO,
     dto: IModifyColaboradorDTO,
   ): Promise<IColaboradorDTO> {
-    const colaboradorEntity = await this.colaboradoresRepository.modify(idDto, dto);
+    const colaboradorEntity = await this.colaboradoresRepository.modify(
+      idDto,
+      dto,
+    );
     return new ColaboradorDTO(colaboradorEntity);
   }
   remove(idDto: IIdColaboradorDTO): Promise<void> {
     return this.colaboradoresRepository.remove(idDto);
+  }
+  async loadById(idDto: IIdColaboradorDTO): Promise<IColaboradorDTO> {
+    const colaboradorEntity = await this.colaboradoresRepository.loadById(
+      idDto,
+    );
+    return new ColaboradorDTO(colaboradorEntity);
   }
 }

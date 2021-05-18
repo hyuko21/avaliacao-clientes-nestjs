@@ -27,4 +27,7 @@ export class ColaboradoresServiceSpy implements IColaboradoresService {
   remove(idDto: IIdColaboradorDTO): Promise<void> {
     return;
   }
+  async loadById(idDto: IIdColaboradorDTO): Promise<IColaboradorDTO> {
+    return this.colaboradorDTO;
+  }
 }
