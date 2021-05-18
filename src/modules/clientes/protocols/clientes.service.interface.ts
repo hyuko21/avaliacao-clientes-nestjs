@@ -8,4 +8,5 @@ export interface IClientesService {
   list(): Promise<IClienteDTO[]>;
   modify(idDto: IIdClienteDTO, dto: IModifyClienteDTO): Promise<IClienteDTO>;
   remove(idDto: IIdClienteDTO): Promise<void>;
+  loadById(idDto: IIdClienteDTO): Promise<IClienteDTO>;
 }

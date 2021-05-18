@@ -27,4 +27,7 @@ export class ClientesServiceSpy implements IClientesService {
   remove(idDto: IIdClienteDTO): Promise<void> {
     return;
   }
+  async loadById(idDto: IIdClienteDTO): Promise<IClienteDTO> {
+    return this.clienteDTO;
+  }
 }

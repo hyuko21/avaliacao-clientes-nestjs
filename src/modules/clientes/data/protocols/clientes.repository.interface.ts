@@ -8,4 +8,5 @@ export interface IClientesRepository {
   list(): Promise<ClienteEntity[]>;
   modify(idDto: IIdClienteDTO, dto: IModifyClienteDTO): Promise<ClienteEntity>;
   remove(idDto: IIdClienteDTO): Promise<void>;
+  loadById(idDto: IIdClienteDTO): Promise<ClienteEntity>;
 }

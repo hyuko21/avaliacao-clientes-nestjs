@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientesService } from './clientes.service';
 import { ClientesRepositorySpy } from './data/test/mock-clientes.repository';
@@ -158,6 +159,41 @@ describe('ClientesService', () => {
       const result = await service.remove(idDto);
 
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('loadById()', () => {
+    let idDto: IIdClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+    });
+
+    describe('ClientesRepository dependency', () => {
+      it('should call loadById() with correct params', async () => {
+        const loadByIdSpy = jest.spyOn(clientesRepository, 'loadById');
+
+        await service.loadById(idDto);
+
+        expect(loadByIdSpy).toHaveBeenCalledTimes(1);
+        expect(loadByIdSpy).toHaveBeenCalledWith(idDto);
+      });
+
+      it('should throw NotFoundException if loadById() returns falsy', async () => {
+        jest
+          .spyOn(clientesRepository, 'loadById')
+          .mockResolvedValueOnce(undefined);
+
+        const promise = service.loadById(idDto);
+
+        await expect(promise).rejects.toThrowError(new NotFoundException());
+      });
+    });
+
+    it('should return ClienteDTO on success', async () => {
+      const result = await service.loadById(idDto);
+
+      expect(result).toBeInstanceOf(ClienteDTO);
     });
   });
 });

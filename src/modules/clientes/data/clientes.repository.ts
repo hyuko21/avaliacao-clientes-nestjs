@@ -42,4 +42,7 @@ export class ClientesRepository
     }
     await this.repository.remove(clienteEntity);
   }
+  loadById(idDto: IIdClienteDTO): Promise<ClienteEntity> {
+    return this.repository.findOne({ where: { id: idDto.id } });
+  }
 }

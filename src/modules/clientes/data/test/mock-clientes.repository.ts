@@ -27,4 +27,7 @@ export class ClientesRepositorySpy implements IClientesRepository {
   remove(idDto: IIdClienteDTO): Promise<void> {
     return;
   }
+  async loadById(idDto: IIdClienteDTO): Promise<ClienteEntity> {
+    return this.clienteEntity;
+  }
 }

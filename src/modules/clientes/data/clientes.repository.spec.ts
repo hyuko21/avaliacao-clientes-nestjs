@@ -168,4 +168,29 @@ describe('ClientesRepository', () => {
       });
     });
   });
+
+  describe('loadById()', () => {
+    let idDto: IIdClienteDTO;
+
+    beforeEach(() => {
+      idDto = mockIdClienteDTO();
+    });
+
+    it('should return undefined if ClienteEntity not found', async () => {
+      const result = await repository.loadById(idDto);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return ClienteEntity on success', async () => {
+      const clienteEntity = await getRepository(ClienteEntity).save({
+        ...mockClienteEntity(),
+        id: idDto.id,
+      });
+
+      const result = await repository.loadById(idDto);
+
+      expect(result).toEqual(clienteEntity);
+    });
+  });
 });
