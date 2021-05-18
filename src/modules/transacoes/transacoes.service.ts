@@ -33,6 +33,7 @@ export class TransacoesService implements ITransacoesService {
     return new TransacaoDTO(transacaoEntity);
   }
   async loadById(idDto: IIdTransacaoDTO): Promise<ITransacaoDTO> {
-    return this.loadById(idDto);
+    const transacaoEntity = await this.transacoesRepository.loadById(idDto);
+    return new TransacaoDTO(transacaoEntity);
   }
 }
