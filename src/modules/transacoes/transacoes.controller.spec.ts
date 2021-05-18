@@ -130,6 +130,33 @@ describe('TransacoesController', () => {
     });
   });
 
+  describe('list()', () => {
+    describe('TransacoesService dependency', () => {
+      it('should call list() with correct params', async () => {
+        const listSpy = jest.spyOn(transacoesService, 'list');
+
+        await controller.list();
+
+        expect(listSpy).toHaveBeenCalledTimes(1);
+        expect(listSpy).toHaveBeenCalledWith();
+      });
+
+      it('should return empty array if list() returns empty', async () => {
+        jest.spyOn(transacoesService, 'list').mockResolvedValueOnce([]);
+
+        const result = await controller.list();
+
+        expect(result).toEqual([]);
+      });
+    });
+
+    it('should return array of TransacaoDTO on success', async () => {
+      const result = await controller.list();
+
+      expect(result).toEqual(transacoesService.manyTransacaoDTO);
+    });
+  });
+
   describe('modify()', () => {
     let idDto: IIdTransacaoDTO, dto: IModifyTransacaoDTO;
 

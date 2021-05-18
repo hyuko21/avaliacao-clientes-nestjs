@@ -19,6 +19,12 @@ export class TransacoesService implements ITransacoesService {
     const transacaoEntity = await this.transacoesRepository.add(dto);
     return new TransacaoDTO(transacaoEntity);
   }
+  async list(): Promise<ITransacaoDTO[]> {
+    const manyTransacaoEntity = await this.transacoesRepository.list();
+    return manyTransacaoEntity.map(
+      (transacaoEntity) => new TransacaoDTO(transacaoEntity),
+    );
+  }
   async modify(
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,

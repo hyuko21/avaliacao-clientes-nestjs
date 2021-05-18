@@ -10,3 +10,8 @@ export const mockTransacaoDTO = (): ITransacaoDTO => ({
   idLoja: Faker.datatype.uuid(),
   idColaborador: Faker.datatype.uuid(),
 });
+
+export const mockManyTransacaoDTO = (): ITransacaoDTO[] =>
+  Array.from({ length: Faker.datatype.number({ min: 4, max: 8 }) }).map(() =>
+    mockTransacaoDTO(),
+  );

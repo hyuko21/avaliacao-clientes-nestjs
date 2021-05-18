@@ -5,6 +5,7 @@ import { IIdTransacaoDTO } from '#/transacoes/dtos/protocols/id-transacao.dto.in
 
 export interface ITransacoesService {
   add(dto: IAddTransacaoDTO): Promise<ITransacaoDTO>;
+  list(): Promise<ITransacaoDTO[]>;
   modify(
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,

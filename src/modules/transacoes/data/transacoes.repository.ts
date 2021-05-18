@@ -14,6 +14,9 @@ export class TransacoesRepository
   add(dto: IAddTransacaoDTO): Promise<TransacaoEntity> {
     return this.repository.save(dto);
   }
+  list(): Promise<TransacaoEntity[]> {
+    return this.repository.find();
+  }
   async modify(
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,

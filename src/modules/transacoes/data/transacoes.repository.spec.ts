@@ -85,6 +85,28 @@ describe('TransacoesRepository', () => {
     });
   });
 
+  describe('list()', () => {
+    it('should return empty array if entities not found', async () => {
+      const result = await repository.list();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return array of TransacaoEntity on success', async () => {
+      const manyTransacaoEntity = await Promise.all([
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+        mockInsertTransacaoEntity(),
+      ]);
+
+      const result = await repository.list();
+      result.forEach((item) => (item.valor = +item.valor));
+
+      expect(result).toEqual(expect.arrayContaining(manyTransacaoEntity));
+    });
+  });
+
   describe('modify()', () => {
     let idDto: IIdTransacaoDTO, dto: IModifyTransacaoDTO;
 

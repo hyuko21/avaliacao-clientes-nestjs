@@ -5,6 +5,7 @@ import { TransacaoEntity } from '#/transacoes/data/entities/transacao.entity';
 
 export interface ITransacoesRepository {
   add(dto: IAddTransacaoDTO): Promise<TransacaoEntity>;
+  list(): Promise<TransacaoEntity[]>;
   modify(
     idDto: IIdTransacaoDTO,
     dto: IModifyTransacaoDTO,

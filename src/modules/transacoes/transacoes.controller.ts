@@ -2,6 +2,7 @@ import { ErrorSchema } from '@/swagger/schemas';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
@@ -62,6 +63,13 @@ export class TransacoesController {
       idLoja: lojaDTO.id,
       idColaborador: colaboradorDTO.id,
     });
+  }
+
+  @ApiOkResponse({ type: [TransacaoDTO] })
+  @ApiInternalServerErrorResponse()
+  @Get()
+  list(): Promise<TransacaoDTO[]> {
+    return this.transacoesService.list();
   }
 
   @ApiOkResponse({ type: TransacaoDTO })
