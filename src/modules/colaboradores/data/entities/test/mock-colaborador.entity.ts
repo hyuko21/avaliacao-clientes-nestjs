@@ -6,3 +6,8 @@ export const mockColaboradorEntity = (): ColaboradorEntity => ({
   ...mockAbstractEntity(),
   nome: Faker.name.findName(),
 });
+
+export const mockManyColaboradorEntity = (): ColaboradorEntity[] =>
+  Array.from({ length: Faker.datatype.number({ min: 4, max: 8 }) }).map(() =>
+    mockColaboradorEntity(),
+  );

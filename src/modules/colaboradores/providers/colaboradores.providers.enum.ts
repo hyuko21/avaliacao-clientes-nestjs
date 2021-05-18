@@ -1,0 +1,4 @@
+export enum ColaboradoresProvider {
+  COLABORADORES_SERVICE = 'services.COLABORADORES_SERVICE',
+  COLABORADORES_REPOSITORY = 'repositories.COLABORADORES_REPOSITORY',
+}
