@@ -9,9 +9,9 @@ export class AvaliacoesRepository
   implements IAvaliacoesRepository
 {
   add(dto: IAddAvaliacaoDTO): Promise<AvaliacaoEntity> {
-    throw new Error('Method not implemented.');
+    return this.repository.save(dto);
   }
   list(): Promise<AvaliacaoEntity[]> {
-    throw new Error('Method not implemented.');
+    return this.repository.find();
   }
 }
