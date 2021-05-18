@@ -3,11 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './config/core.module';
 import { NoCacheMiddleware } from './middlewares';
-import { ClientesModule } from './modules';
+import { ClientesModule, LojasModule } from './modules';
 import { SWAGGER_API_ROOT } from './swagger/constants';
 
 @Module({
-  imports: [CoreModule, ClientesModule],
+  imports: [CoreModule, ClientesModule, LojasModule],
   controllers: [AppController],
   providers: [AppService],
 })
