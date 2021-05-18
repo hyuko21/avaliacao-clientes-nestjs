@@ -13,9 +13,9 @@ import { TransacaoEntity } from '#/transacoes/data/entities/transacao.entity';
 import { mockInsertTransacaoEntity } from '#/transacoes/data/entities/test/transacoes.helpers';
 import { IModifyTransacaoDTO } from '#/transacoes/dtos/protocols/modify-transacao.dto.interface';
 import { mockModifyTransacaoDTO } from '#/transacoes/dtos/test/mock-modify-transacao.dto';
-import { mockInsertClienteEntity } from '@/modules/clientes/data/entities/test/clientes.helpers';
-import { mockInsertLojaEntity } from '@/modules/lojas/data/entities/test/lojas.helpers';
-import { mockInsertColaboradorEntity } from '@/modules/colaboradores/data/entities/test/colaboradores.helpers';
+import { mockInsertClienteEntity } from '#/clientes/data/entities/test/clientes.helpers';
+import { mockInsertLojaEntity } from '#/lojas/data/entities/test/lojas.helpers';
+import { mockInsertColaboradorEntity } from '#/colaboradores/data/entities/test/colaboradores.helpers';
 
 describe('Transacoes e2e', () => {
   let app: INestApplication;
@@ -48,10 +48,154 @@ describe('Transacoes e2e', () => {
     beforeEach(() => {
       requestTest = agentTest.post(baseURL);
       requestBody = mockAddTransacaoDTO();
-      requestTest.send(requestBody);
     });
 
-    it.todo('should create new Transacao on success');
+    it('should return 400 if body.valor is less than 100', async () => {
+      requestBody.valor = 99;
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: ['valor must not be less than 100'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 400 if body.valor is not valid number', async () => {
+      requestBody.valor = (<unknown>Faker.datatype.string()) as number;
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: [
+          'valor must not be less than 100',
+          'valor must be a number conforming to the specified constraints',
+        ],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 400 if body.data is not valid date string', async () => {
+      requestBody.data = (<unknown>Faker.datatype.number()) as Date;
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: ['data must be a valid ISO 8601 date string'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 400 if body.idCliente is malformed', async () => {
+      requestBody.idCliente = Faker.datatype.string();
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: ['idCliente must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 400 if body.idLoja is malformed', async () => {
+      requestBody.idLoja = Faker.datatype.string();
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: ['idLoja must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    it('should return 400 if body.idColaborador is malformed', async () => {
+      requestBody.idColaborador = Faker.datatype.string();
+
+      await requestTest.send(requestBody).expect(400, {
+        statusCode: 400,
+        message: ['idColaborador must be a UUID'],
+        error: 'Bad Request',
+      });
+    });
+
+    describe('when body is valid', () => {
+      describe('if Cliente not exists', () => {
+        beforeEach(async () => {
+          const [lojaEntity, colaboradorEntity] = await Promise.all([
+            mockInsertLojaEntity(),
+            mockInsertColaboradorEntity(),
+          ]);
+          requestBody.idLoja = lojaEntity.id;
+          requestBody.idColaborador = colaboradorEntity.id;
+          requestTest.send(requestBody);
+        });
+
+        it('should return 404 if Cliente not found', async () => {
+          await requestTest.expect(404, {
+            statusCode: 404,
+            message: 'Cliente Not Found',
+          });
+        });
+      });
+
+      describe('if Loja not exists', () => {
+        beforeEach(async () => {
+          const [colaboradorEntity, clienteEntity] = await Promise.all([
+            mockInsertColaboradorEntity(),
+            mockInsertClienteEntity(),
+          ]);
+          requestBody.idCliente = clienteEntity.id;
+          requestBody.idColaborador = colaboradorEntity.id;
+          requestTest.send(requestBody);
+        });
+
+        it('should return 404 if Loja not found', async () => {
+          await requestTest.expect(404, {
+            statusCode: 404,
+            message: 'Loja Not Found',
+          });
+        });
+      });
+
+      describe('if Colaborador not exists', () => {
+        beforeEach(async () => {
+          const [clienteEntity, lojaEntity] = await Promise.all([
+            mockInsertClienteEntity(),
+            mockInsertLojaEntity(),
+          ]);
+          requestBody.idCliente = clienteEntity.id;
+          requestBody.idLoja = lojaEntity.id;
+          requestTest.send(requestBody);
+        });
+
+        it('should return 404 if Colaborador not found', async () => {
+          await requestTest.expect(404, {
+            statusCode: 404,
+            message: 'Colaborador Not Found',
+          });
+        });
+      });
+
+      it('should create new Transacao on success', async () => {
+        const [clienteEntity, lojaEntity, colaboradorEntity] =
+          await Promise.all([
+            mockInsertClienteEntity(),
+            mockInsertLojaEntity(),
+            mockInsertColaboradorEntity(),
+          ]);
+        requestBody.idCliente = clienteEntity.id;
+        requestBody.idLoja = lojaEntity.id;
+        requestBody.idColaborador = colaboradorEntity.id;
+
+        await requestTest
+          .send(requestBody)
+          .expect(201)
+          .expect(({ body }) => {
+            expect(body).toEqual({
+              ...requestBody,
+              id: expect.any(String),
+              data: expect.any(String),
+              criadoEm: expect.any(String),
+              atualizadoEm: expect.any(String),
+            });
+          });
+      });
+    });
   });
 
   describe(`PUT ${TransacoesConfig.prefix}/:id`, () => {
@@ -121,8 +265,8 @@ describe('Transacoes e2e', () => {
             .expect(200)
             .expect(({ body }) => {
               expect(body).toEqual({
-                id: transacaoEntity.id,
                 ...requestBody,
+                id: transacaoEntity.id,
                 valor: requestBody.valor.toString(),
                 data: expect.any(String),
                 criadoEm: expect.any(String),
