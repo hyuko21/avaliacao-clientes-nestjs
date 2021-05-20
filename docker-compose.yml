@@ -9,6 +9,7 @@ services:
     command: yarn start:dev
     volumes:
       - .:/usr/src/app
+      - ./usr/src/app/node_modules
 
   postgres:
     image: postgres:12-alpine
