@@ -11,9 +11,9 @@ import { mockModifyTransacaoDTO } from '#/transacoes/dtos/test/mock-modify-trans
 import { NotFoundException } from '@nestjs/common';
 import { mockInsertClienteEntity } from '#/clientes/data/entities/test/clientes.helpers';
 import { mockInsertLojaEntity } from '#/lojas/data/entities/test/lojas.helpers';
-import { mockColaboradorEntity } from '#/colaboradores/data/entities/test/mock-colaborador.entity';
 import { mockInsertTransacaoEntity } from './entities/test/transacoes.helpers';
 import { mockTransacaoEntity } from './entities/test/mock-transacao.entity';
+import { mockInsertColaboradorEntity } from '#/colaboradores/data/entities/test/colaboradores.helpers';
 
 describe('TransacoesRepository', () => {
   let repository: TransacoesRepository;
@@ -39,7 +39,7 @@ describe('TransacoesRepository', () => {
       const [clienteEntity, lojaEntity, colaboradorEntity] = await Promise.all([
         mockInsertClienteEntity(),
         mockInsertLojaEntity(),
-        mockColaboradorEntity(),
+        mockInsertColaboradorEntity(),
       ]);
       dto = {
         ...mockAddTransacaoDTO(),
@@ -131,7 +131,7 @@ describe('TransacoesRepository', () => {
           await Promise.all([
             mockInsertClienteEntity(),
             mockInsertLojaEntity(),
-            mockColaboradorEntity(),
+            mockInsertColaboradorEntity(),
           ]);
         dto.idCliente = clienteEntity.id;
         dto.idLoja = lojaEntity.id;
@@ -187,7 +187,7 @@ describe('TransacoesRepository', () => {
       const [clienteEntity, lojaEntity, colaboradorEntity] = await Promise.all([
         mockInsertClienteEntity(),
         mockInsertLojaEntity(),
-        mockColaboradorEntity(),
+        mockInsertColaboradorEntity(),
       ]);
       const transacaoEntity = await getRepository(TransacaoEntity).save({
         ...mockTransacaoEntity(),
